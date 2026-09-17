@@ -178,3 +178,42 @@ eality_gap_score and categorizes into NORMAL, WATCH, HIGH, CRITICAL.
 - **Automated Tests (`tests/test_project_risk.py`):**
   - 8 new tests verifying feature extraction, bounds, prediction consistency, all 5 endpoints, and 404 responses.
   - **Full Test Suite Status:** **41 passed, 0 failed** across all 8 test files.
+
+---
+
+## 10. Explainable Macro Financial Risk Intelligence Upgrade
+- **Explainable ML Engine Upgrade (`ml/models/macro_risk_analyzer.py`):**
+  - Calibrated and persisted empirical national baselines (means, medians, standard deviations, and median absolute deviations) for all 10 macro features during `fit()`.
+  - Added `explain_state_risk(state_name, metrics)` calculating feature deviations, risk contributions (`HIGH`, `MEDIUM`, `LOW`), dynamic `why_flagged` contextual narratives, and human-in-the-loop verification recommendations.
+  - Retrained and serialized model to `models/macro_risk/macro_risk_model.joblib`.
+- **State Dossier API Upgrade (`backend/api/macro_router.py`):**
+  - Upgraded `GET /api/v1/macro/states/{state}` to return comprehensive State Dossier payload:
+    - `state_overview`: `analytical_risk_indicator` (0-100), `risk_tier`, `risk_cluster_name`, `model_confidence`, `data_quality_status`.
+    - `financials`: Audited 4-year cumulative figures, cost per work, backlog absorption, volatility CV, trend, and honest `released_amount: null` labeled `"NOT AVAILABLE"`.
+    - `money_flow`: Flow diagram data structure tracing Released Funds (`NOT AVAILABLE`) -> Expenditure -> Completed Works, and separate Unspent Balance.
+    - `financial_ratios`: Explicit status (`NOT AVAILABLE` vs `COMPUTED`), formulas, and explanation reasons.
+    - `feature_baseline_comparisons`: 10-feature comparison table (State Value vs Model Baseline vs Deviation vs Risk Contribution).
+    - `anomaly_explanation`: Dynamic `why_flagged` points and synthesis narrative.
+    - `yearly_performance`: 4-year time series with yearly costs and YoY changes.
+    - `sector_distribution`: 6-sector infrastructure percentage breakdown.
+    - `verification_recommendations`: Actionable audit recommendations.
+    - `source_provenance`: MoSPI attribution, ingested filenames, retrieval timestamps, verification status.
+    - `data_limitations`: Clear demarcation between observed disclosures and model analytics.
+- **Frontend State Macro Intelligence Interface (`backend/static/index.html`):**
+  - Added dedicated navigation tab `State Macro Intelligence`.
+  - Implemented National Macro KPI Summary cards (Unspent Balance, 4-Yr Expenditure, Backlog Absorption, Entity count, Bottlenecks).
+  - Integrated State Selector dropdown and quick-select pills for major States/UTs.
+  - Built full Explainable State Dossier view:
+    - Prominent `Analytical Risk Indicator: [Score]` banner with colored tier and confidence badges.
+    - Dynamic *"Why is this state flagged?"* callout box.
+    - Financial Intelligence Panel with explicit `OBSERVED DATA` vs `MODEL-DERIVED ANALYSIS` labels.
+    - Fiscal Liquidity Flow diagram and Financial Ratios table.
+    - Interactive Financial Trend Chart powered by Chart.js with toggle buttons: `Expenditure (₹ Cr)` | `Completed Works` | `Cost per Work (₹ Lakhs)` and tooltips.
+    - 10-feature Model Baseline Deviation table with risk contribution badges.
+    - Sectoral expenditure distribution progress bars.
+    - Verification recommendations and provenance / limitations sections.
+    - Comparative 37 States/UTs ranking table with multi-criteria sorting.
+- **Automated Tests (`tests/test_macro_dossier.py`):**
+  - Added 7 comprehensive tests covering dossier schema, financial intelligence math, missing released amount handling, baseline deviations, explanations, provenance, and 404 responses.
+  - **Full Test Suite Status:** **48 passed, 0 failed (100% pass rate)** in ~7.5 seconds.
+

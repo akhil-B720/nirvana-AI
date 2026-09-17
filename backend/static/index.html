@@ -16,6 +16,7 @@
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
     tailwind.config = {
@@ -88,6 +89,9 @@
       <div class="max-w-7xl mx-auto flex space-x-1 overflow-x-auto py-1" id="navTabs">
         <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-cyan-400 bg-sky-950/50 border border-sky-800/60">
           <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 inline mr-1.5"></i>Command Center
+        </button>
+                <button onclick="switchTab('macro')" id="tab-macro" class="tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white">
+          <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 inline mr-1.5"></i>State Macro Intelligence
         </button>
         <button onclick="switchTab('map')" id="tab-map" class="tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white">
           <i data-lucide="map-pin" class="w-3.5 h-3.5 inline mr-1.5"></i>GIS & 3D Map
@@ -195,6 +199,120 @@
       <div class="space-y-3">
         <h3 class="text-xs font-semibold text-white uppercase tracking-wider">Sanctioned Public Works Registry</h3>
         <div class="bg-command-panel border border-command-border rounded-xl p-4" id="overviewTableWrapper"></div>
+      </div>
+    </div>
+
+    
+    <!-- TAB: STATE MACRO FINANCIAL INTELLIGENCE & RISK ANALYSIS -->
+    <div id="view-macro" class="hidden space-y-6">
+      <!-- Title & Advisory Header -->
+      <div class="bg-command-panel border border-command-border rounded-xl p-5">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border bg-sky-950 text-sky-300 border-sky-800">MoSPI MACRO INTELLIGENCE</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-950 text-emerald-300 border-emerald-800">PUBLIC_VERIFIED</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border bg-slate-800 text-slate-300 border-slate-700">37 STATES & UTs</span>
+            </div>
+            <h2 class="text-base font-bold text-white mt-1.5 flex items-center gap-2">
+              <i data-lucide="bar-chart-3" class="w-5 h-5 text-cyan-400"></i>
+              MPLADS State Macro Financial Intelligence & Bottleneck Detection
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Multi-year fiscal trajectory, unspent fund liquidity, backlog absorption capacity, and empirical risk indicators across Indian States & Union Territories.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="refreshMacroData()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 flex items-center gap-1.5">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-cyan-400"></i> Refresh Macro Data
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-4 p-3 rounded-lg bg-amber-950/30 border border-amber-800/40 text-[11px] text-amber-200 flex items-start gap-2">
+          <i data-lucide="info" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+          <div>
+            <strong class="text-amber-400">STATUTORY DECISION-SUPPORT NOTICE:</strong> Analytical Risk Indicators quantify empirical deviations in expenditure patterns, liquidity accumulation, and work completion rates. They are decision-support signals for audit prioritization and do not constitute proof of fraud, corruption, or wrongdoing.
+          </div>
+        </div>
+      </div>
+
+      <!-- National Macro KPIs Strip -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="macroNationalKpis">
+        <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+          <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wider">National Unspent</div>
+          <div class="text-xl font-bold font-mono text-amber-400 mt-1" id="macro-kpi-unspent">₹3,923.63 Cr</div>
+          <span class="text-[9px] font-mono text-slate-400">Idle Treasury Funds</span>
+        </div>
+        <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+          <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wider">4-Yr Expenditure</div>
+          <div class="text-xl font-bold font-mono text-cyan-400 mt-1" id="macro-kpi-expenditure">₹10,480.99 Cr</div>
+          <span class="text-[9px] font-mono text-slate-400">Capital Utilized</span>
+        </div>
+        <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+          <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wider">National Backlog Ratio</div>
+          <div class="text-xl font-bold font-mono text-rose-400 mt-1" id="macro-kpi-backlog">1.48 Years</div>
+          <span class="text-[9px] font-mono text-slate-400">Absorption Time</span>
+        </div>
+        <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+          <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Monitored Entities</div>
+          <div class="text-xl font-bold font-mono text-emerald-400 mt-1" id="macro-kpi-states">37</div>
+          <span class="text-[9px] font-mono text-slate-400">States & UTs</span>
+        </div>
+        <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+          <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Priority Bottlenecks</div>
+          <div class="text-xl font-bold font-mono text-rose-400 mt-1" id="macro-kpi-bottlenecks">11</div>
+          <span class="text-[9px] font-mono text-slate-400">Critical / High Tier</span>
+        </div>
+        <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+          <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Total Completed</div>
+          <div class="text-xl font-bold font-mono text-white mt-1" id="macro-kpi-works">3,25,979</div>
+          <span class="text-[9px] font-mono text-slate-400">Physical Works</span>
+        </div>
+      </div>
+
+      <!-- State Selection & Quick Filters Toolbar -->
+      <div class="bg-command-panel border border-command-border rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div class="flex items-center gap-3 flex-1">
+          <label for="macroStateSelect" class="text-xs font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap">Select State / UT:</label>
+          <select id="macroStateSelect" onchange="loadMacroStateDossier(this.value)" class="w-full max-w-sm bg-command-dark border border-command-border rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-medium">
+            <option value="">Loading states...</option>
+          </select>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5 text-xs">
+          <span class="text-slate-400 text-[11px] font-medium mr-1">Quick Select:</span>
+          <button onclick="loadMacroStateDossier('Uttar Pradesh')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono">Uttar Pradesh</button>
+          <button onclick="loadMacroStateDossier('Maharashtra')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono">Maharashtra</button>
+          <button onclick="loadMacroStateDossier('Bihar')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono">Bihar</button>
+          <button onclick="loadMacroStateDossier('Tamil Nadu')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono">Tamil Nadu</button>
+          <button onclick="loadMacroStateDossier('West Bengal')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono">West Bengal</button>
+          <button onclick="loadMacroStateDossier('Lakshadweep')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-mono">Lakshadweep</button>
+        </div>
+      </div>
+
+      <!-- STATE DOSSIER CONTAINER -->
+      <div id="macroDossierWrapper" class="space-y-6">
+        <!-- Will be populated by JS loadMacroStateDossier -->
+      </div>
+
+      <!-- Comparative National State Registry Table -->
+      <div class="space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <h3 class="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="list-ordered" class="w-4 h-4 text-cyan-400"></i>
+            All 37 States & UTs — Comparative Macro Risk & Financial Registry
+          </h3>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-400 text-[11px]">Sort By:</span>
+            <button onclick="sortMacroTable('anomaly_score')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 text-[11px]">Risk Indicator</button>
+            <button onclick="sortMacroTable('unspent_balance_crore')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px]">Unspent Balance</button>
+            <button onclick="sortMacroTable('backlog_absorption_years')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px]">Backlog Years</button>
+            <button onclick="sortMacroTable('total_expenditure_4yr_crore')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px]">Expenditure</button>
+          </div>
+        </div>
+        <div class="bg-command-panel border border-command-border rounded-xl p-4 overflow-x-auto" id="macroStatesTableContainer">
+          <div class="text-center py-8 text-slate-500 text-xs">Loading State/UT records...</div>
+        </div>
       </div>
     </div>
 
@@ -379,7 +497,14 @@
       twinGroup: null,
       twinAnimFrame: null,
       simProgress: 50,
-      twinMode: 'REPORTED'
+      twinMode: 'REPORTED',
+      macroStates: [],
+      macroSummary: null,
+      selectedMacroState: 'Uttar Pradesh',
+      selectedMacroDossier: null,
+      macroTrendMetric: 'expenditure',
+      macroTrendChartInstance: null,
+      macroSortBy: 'anomaly_score'
     };
 
     // Load initial data
@@ -420,7 +545,7 @@
     // Tab switcher
     function switchTab(tab) {
       state.activeTab = tab;
-      ['overview', 'map', 'projects', 'reality-gap', 'cases', 'models'].forEach(t => {
+      ['overview', 'macro', 'map', 'projects', 'reality-gap', 'cases', 'models'].forEach(t => {
         const el = document.getElementById('view-' + t);
         const btn = document.getElementById('tab-' + t);
         if (t === tab) {
@@ -432,6 +557,7 @@
         }
       });
 
+      if (tab === 'macro') initMacroTab();
       if (tab === 'reality-gap') renderRealityGapList();
       if (tab === 'cases') loadVerificationCases();
       if (tab === 'models') loadModelRegistry();
@@ -964,6 +1090,767 @@
         `;
       } catch (e) {
         console.error(e);
+      }
+    }
+
+    
+    // =================================================================
+    // MACRO STATE FINANCIAL INTELLIGENCE & RISK CONTROLLER
+    // =================================================================
+    async function initMacroTab() {
+      try {
+        const [summaryRes, statesRes] = await Promise.all([
+          fetch('/api/v1/macro/risk-analysis').then(r => r.json()),
+          fetch('/api/v1/macro/states?sort_by=' + state.macroSortBy).then(r => r.json())
+        ]);
+
+        state.macroSummary = summaryRes;
+        state.macroStates = statesRes;
+
+        // Render National KPI cards
+        renderMacroNationalKpis(summaryRes);
+
+        // Populate State Dropdown
+        populateMacroStateSelect(statesRes);
+
+        // Render Comparative Table
+        renderMacroStatesTable(statesRes);
+
+        // Load Default State Dossier (Uttar Pradesh or first state)
+        const targetState = state.selectedMacroState || (statesRes.length > 0 ? statesRes[0].state : 'Uttar Pradesh');
+        loadMacroStateDossier(targetState);
+        lucide.createIcons();
+      } catch (err) {
+        console.error('Error initializing macro intelligence:', err);
+      }
+    }
+
+    function refreshMacroData() {
+      initMacroTab();
+    }
+
+    function renderMacroNationalKpis(summary) {
+      if (!summary) return;
+      document.getElementById('macro-kpi-unspent').textContent = '₹' + (summary.national_unspent_balance_crore ? summary.national_unspent_balance_crore.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0.00') + ' Cr';
+      document.getElementById('macro-kpi-expenditure').textContent = '₹' + (summary.national_4yr_expenditure_crore ? summary.national_4yr_expenditure_crore.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0.00') + ' Cr';
+      document.getElementById('macro-kpi-backlog').textContent = (summary.national_backlog_ratio_years || 0) + ' Years';
+      document.getElementById('macro-kpi-states').textContent = summary.total_states || 37;
+
+      const tiers = summary.risk_tier_distribution || {};
+      const priorityCount = (tiers['CRITICAL_BOTTLENECK'] || 0) + (tiers['HIGH_BACKLOG'] || 0);
+      document.getElementById('macro-kpi-bottlenecks').textContent = priorityCount;
+
+      let totalWorks = 0;
+      if (state.macroStates && state.macroStates.length) {
+        totalWorks = state.macroStates.reduce((acc, s) => acc + (s.total_works_completed_4yr || 0), 0);
+      }
+      document.getElementById('macro-kpi-works').textContent = totalWorks > 0 ? totalWorks.toLocaleString('en-IN') : '3,25,979';
+    }
+
+    function populateMacroStateSelect(statesList) {
+      const sel = document.getElementById('macroStateSelect');
+      if (!sel) return;
+      sel.innerHTML = statesList.map(s => `
+        <option value="${s.state}" ${s.state === state.selectedMacroState ? 'selected' : ''}>
+          ${s.state} — [Risk Indicator: ${s.anomaly_score.toFixed(1)}] (${s.risk_tier})
+        </option>
+      `).join('');
+    }
+
+    async function loadMacroStateDossier(stateName) {
+      if (!stateName) return;
+      state.selectedMacroState = stateName;
+      const sel = document.getElementById('macroStateSelect');
+      if (sel && sel.value !== stateName) sel.value = stateName;
+
+      const wrapper = document.getElementById('macroDossierWrapper');
+      wrapper.innerHTML = `
+        <div class="p-8 text-center bg-command-panel rounded-xl border border-command-border text-slate-400 text-xs">
+          <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-cyan-400 mb-2"></i>
+          Synthesizing explainable state dossier for ${stateName}...
+        </div>
+      `;
+      lucide.createIcons();
+
+      try {
+        const res = await fetch(`/api/v1/macro/states/${encodeURIComponent(stateName)}`);
+        if (!res.ok) throw new Error('State dossier not found');
+        const d = await res.json();
+        state.selectedMacroDossier = d;
+
+        renderMacroStateDossierView(d);
+        lucide.createIcons();
+      } catch (err) {
+        wrapper.innerHTML = `
+          <div class="p-6 text-center bg-rose-950/30 border border-rose-800 rounded-xl text-rose-300 text-xs">
+            Failed to load dossier for ${stateName}: ${err.message}
+          </div>
+        `;
+      }
+    }
+
+    function renderMacroStateDossierView(d) {
+      const wrapper = document.getElementById('macroDossierWrapper');
+      const ov = d.state_overview || {};
+      const fin = d.financials || {};
+      const flow = d.money_flow || {};
+      const ratios = d.financial_ratios || {};
+      const why = (d.anomaly_explanation && d.anomaly_explanation.why_flagged) || [];
+      const summaryText = (d.anomaly_explanation && d.anomaly_explanation.analytical_summary) || '';
+      const baselines = d.feature_baseline_comparisons || [];
+      const sectors = d.sector_distribution || {};
+      const recs = d.verification_recommendations || [];
+      const prov = d.source_provenance || {};
+
+      const tierColors = {
+        CRITICAL_BOTTLENECK: { bg: 'bg-rose-950', text: 'text-rose-300', border: 'border-rose-800', badge: 'bg-rose-600' },
+        HIGH_BACKLOG: { bg: 'bg-orange-950', text: 'text-orange-300', border: 'border-orange-800', badge: 'bg-orange-600' },
+        WATCH_MODERATE: { bg: 'bg-amber-950', text: 'text-amber-300', border: 'border-amber-800', badge: 'bg-amber-600' },
+        LOW_RISK: { bg: 'bg-emerald-950', text: 'text-emerald-300', border: 'border-emerald-800', badge: 'bg-emerald-600' },
+      };
+      const tierStyle = tierColors[ov.risk_tier] || tierColors.LOW_RISK;
+      const score = ov.analytical_risk_indicator || 0;
+
+      wrapper.innerHTML = `
+        <!-- 1. DOSSIER HEADER -->
+        <div class="bg-command-panel border border-command-border rounded-xl p-6 shadow-xl relative overflow-hidden">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                <span class="px-2.5 py-0.5 rounded text-[10px] font-bold border ${tierStyle.bg} ${tierStyle.text} ${tierStyle.border}">
+                  ${ov.risk_tier || 'MONITORED'}
+                </span>
+                <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                  CLUSTER: ${ov.risk_cluster_name || 'GENERAL'}
+                </span>
+                <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-blue-950 text-blue-300 border border-blue-800">
+                  Confidence: ${(ov.model_confidence * 100).toFixed(0)}%
+                </span>
+                <span class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-800">
+                  ${ov.data_quality_status || 'PUBLIC_VERIFIED'}
+                </span>
+              </div>
+              <h1 class="text-2xl font-bold text-white tracking-wide flex items-center gap-2">
+                ${ov.state}
+              </h1>
+              <p class="text-xs text-slate-400 mt-1">
+                Official MoSPI 4-Year Macro Profile (FY 2016-17 to FY 2019-20) & Machine Learning Anomaly Breakdown
+              </p>
+            </div>
+
+            <!-- Risk Score Indicator Box -->
+            <div class="bg-command-dark p-4 rounded-xl border border-command-border/80 flex flex-col items-center justify-center min-w-[240px]">
+              <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Analytical Risk Indicator</span>
+              <div class="text-3xl font-extrabold font-mono text-white mt-1 flex items-baseline gap-1">
+                <span class="${score >= 70 ? 'text-rose-400' : score >= 50 ? 'text-amber-400' : 'text-emerald-400'}">${score.toFixed(2)}</span>
+                <span class="text-xs font-mono text-slate-500">/ 100</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
+                <div class="h-full ${score >= 70 ? 'bg-rose-500' : score >= 50 ? 'bg-amber-500' : 'bg-emerald-500'}" style="width: ${Math.min(100, score)}%"></div>
+              </div>
+              <span class="text-[9px] text-slate-400 mt-1.5 font-mono">Empirical Anomaly Metric</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. WHY IS THIS STATE FLAGGED? CALLOUT BOX -->
+        <div class="rounded-xl border ${tierStyle.border} ${tierStyle.bg}/40 p-5 space-y-3">
+          <div class="flex items-center gap-2 ${tierStyle.text}">
+            <i data-lucide="alert-circle" class="w-5 h-5"></i>
+            <h3 class="text-sm font-bold uppercase tracking-wider">Why is this state flagged?</h3>
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed font-sans">
+            ${summaryText || 'This state demonstrates typical historical expenditure and absorption rates within normal baseline parameters.'}
+          </p>
+          ${why.length > 0 ? `
+            <div class="space-y-1.5 pt-2 border-t border-command-border/40">
+              <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block">Key Analytical Triggers:</span>
+              <ul class="space-y-1 text-xs text-slate-300">
+                ${why.map(w => `
+                  <li class="flex items-start gap-2">
+                    <span class="text-amber-400 shrink-0 mt-0.5 font-bold">&bull;</span>
+                    <span>${w}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- 3. FINANCIAL INTELLIGENCE PANEL (Observed vs Derived) -->
+        <div class="bg-command-panel border border-command-border rounded-xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-command-border/60 pb-3">
+            <div>
+              <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="wallet" class="w-4 h-4 text-cyan-400"></i>
+                Financial Intelligence Panel
+              </h3>
+              <p class="text-xs text-slate-400">Audited MoSPI Disclosures contrasted with Model-Derived Fiscal Velocity</p>
+            </div>
+            <div class="flex items-center gap-2 text-[10px]">
+              <span class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 font-medium">OBSERVED DATA</span>
+              <span class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-medium">MODEL-DERIVED ANALYSIS</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+            <!-- Card 1: Total Expenditure -->
+            <div class="bg-command-dark p-3.5 rounded-lg border border-command-border/70 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Total 4-Yr Expenditure</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-blue-950 text-blue-300 border border-blue-800 font-semibold">OBSERVED DATA</span>
+              </div>
+              <div class="text-xl font-bold font-mono text-cyan-400">₹${fin.total_expenditure_crore ? fin.total_expenditure_crore.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0.00'} Cr</div>
+              <span class="text-[10px] text-slate-500">Official MoSPI 4-year cumulative</span>
+            </div>
+
+            <!-- Card 2: Unspent Balance -->
+            <div class="bg-command-dark p-3.5 rounded-lg border border-command-border/70 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Unspent Balance</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-blue-950 text-blue-300 border border-blue-800 font-semibold">OBSERVED DATA</span>
+              </div>
+              <div class="text-xl font-bold font-mono text-amber-400">₹${fin.unspent_balance_crore ? fin.unspent_balance_crore.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0.00'} Cr</div>
+              <span class="text-[10px] text-slate-500">Unspent funds sitting in accounts</span>
+            </div>
+
+            <!-- Card 3: Total Completed Works -->
+            <div class="bg-command-dark p-3.5 rounded-lg border border-command-border/70 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Completed Works</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-blue-950 text-blue-300 border border-blue-800 font-semibold">OBSERVED DATA</span>
+              </div>
+              <div class="text-xl font-bold font-mono text-emerald-400">${fin.total_works_completed ? fin.total_works_completed.toLocaleString('en-IN') : '0'}</div>
+              <span class="text-[10px] text-slate-500">Total physical assets delivered</span>
+            </div>
+
+            <!-- Card 4: Average Annual Expenditure -->
+            <div class="bg-command-dark p-3.5 rounded-lg border border-command-border/70 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Avg Annual Expenditure</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-purple-950 text-purple-300 border border-purple-800 font-semibold">MODEL-DERIVED ANALYSIS</span>
+              </div>
+              <div class="text-xl font-bold font-mono text-white">₹${fin.avg_annual_expenditure_crore ? fin.avg_annual_expenditure_crore.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0.00'} Cr/yr</div>
+              <span class="text-[10px] text-slate-500">Formula: Total 4-Yr Exp / 4</span>
+            </div>
+
+            <!-- Card 5: Cost per Completed Work -->
+            <div class="bg-command-dark p-3.5 rounded-lg border border-command-border/70 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Cost per Completed Work</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-purple-950 text-purple-300 border border-purple-800 font-semibold">MODEL-DERIVED ANALYSIS</span>
+              </div>
+              <div class="text-xl font-bold font-mono text-sky-400">₹${fin.cost_per_completed_work_lakhs ? fin.cost_per_completed_work_lakhs.toFixed(2) : '0.00'} Lakhs</div>
+              <span class="text-[10px] text-slate-500">Formula: Total Exp (₹ Lakhs) / Works</span>
+            </div>
+
+            <!-- Card 6: Backlog Absorption Years -->
+            <div class="bg-command-dark p-3.5 rounded-lg border border-command-border/70 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Backlog Absorption Years</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-purple-950 text-purple-300 border border-purple-800 font-semibold">MODEL-DERIVED ANALYSIS</span>
+              </div>
+              <div class="text-xl font-bold font-mono ${fin.backlog_absorption_years > 2.0 ? 'text-rose-400' : fin.backlog_absorption_years > 1.2 ? 'text-amber-400' : 'text-emerald-400'}">${fin.backlog_absorption_years ? fin.backlog_absorption_years.toFixed(2) : '0.00'} Years</div>
+              <span class="text-[10px] text-slate-500">Years required to exhaust unspent balance</span>
+            </div>
+
+            <!-- Card 7: Expenditure Volatility -->
+            <div class="bg-command-dark p-3.5 rounded-lg border border-command-border/70 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Expenditure Volatility (CV)</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-purple-950 text-purple-300 border border-purple-800 font-semibold">MODEL-DERIVED ANALYSIS</span>
+              </div>
+              <div class="text-xl font-bold font-mono text-white">${fin.expenditure_volatility_cv !== null && fin.expenditure_volatility_cv !== undefined ? fin.expenditure_volatility_cv.toFixed(3) : 'N/A'}</div>
+              <span class="text-[10px] text-slate-500">Coefficient of variation (Std / Mean)</span>
+            </div>
+
+            <!-- Card 8: Expenditure Trend -->
+            <div class="bg-command-dark p-3.5 rounded-lg border border-command-border/70 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Expenditure Trend</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-purple-950 text-purple-300 border border-purple-800 font-semibold">MODEL-DERIVED ANALYSIS</span>
+              </div>
+              <div class="text-xl font-bold font-mono text-cyan-300">${fin.expenditure_trend || 'STABLE'}</div>
+              <span class="text-[10px] text-slate-500">Least-squares linear trajectory</span>
+            </div>
+
+            <!-- Card 9: Released Amount (Honest Data Reporting) -->
+            <div class="bg-command-dark p-3.5 rounded-lg border border-command-border/70 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Released Amount</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] bg-blue-950 text-blue-300 border border-blue-800 font-semibold">OBSERVED DATA</span>
+              </div>
+              <div class="text-base font-bold font-mono text-amber-400">${fin.released_amount_label || 'NOT AVAILABLE'}</div>
+              <span class="text-[9px] text-slate-500 block">MoSPI dataset does not report released funds</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. MONEY FLOW & FINANCIAL RATIOS -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Money Flow Diagram -->
+          <div class="lg:col-span-5 bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="git-merge" class="w-4 h-4 text-cyan-400"></i>
+              Fiscal Liquidity Flow Diagram
+            </h3>
+            <p class="text-xs text-slate-400">Tracked movement of funds from sanction to completed public infrastructure.</p>
+
+            <div class="space-y-3 pt-2">
+              <!-- Box 1: Released -->
+              <div class="p-3 rounded-lg bg-command-dark border border-dashed border-amber-800/60 flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] uppercase font-bold text-slate-400 block">Step 1: Central Released Funds</span>
+                  <span class="font-mono text-amber-400 font-bold text-xs">${flow.released_funds_status || 'NOT AVAILABLE'}</span>
+                </div>
+                <span class="text-[9px] text-slate-500 font-sans max-w-[140px] text-right">MoSPI dataset does not report released funds</span>
+              </div>
+
+              <!-- Arrow -->
+              <div class="flex justify-center text-slate-500">
+                <i data-lucide="arrow-down" class="w-4 h-4"></i>
+              </div>
+
+              <!-- Box 2: Total Expenditure -->
+              <div class="p-3 rounded-lg bg-command-dark border border-cyan-800/50 flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] uppercase font-bold text-slate-400 block">Step 2: Total State Expenditure</span>
+                  <span class="font-mono text-cyan-400 font-bold text-sm">₹${fin.total_expenditure_crore ? fin.total_expenditure_crore.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0.00'} Cr</span>
+                </div>
+                <span class="text-[10px] text-slate-400">Disbursed for Works</span>
+              </div>
+
+              <!-- Branch: Completed Works vs Unspent -->
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <div class="p-2.5 rounded-lg bg-command-dark border border-emerald-800/50">
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block">Completed Works</span>
+                  <span class="font-mono text-emerald-400 font-bold text-xs">${fin.total_works_completed ? fin.total_works_completed.toLocaleString('en-IN') : '0'}</span>
+                  <span class="text-[9px] text-slate-500 block mt-0.5">Physical Assets</span>
+                </div>
+                <div class="p-2.5 rounded-lg bg-command-dark border border-amber-800/50">
+                  <span class="text-[9px] uppercase font-bold text-slate-400 block">Unspent Balance</span>
+                  <span class="font-mono text-amber-400 font-bold text-xs">₹${fin.unspent_balance_crore ? fin.unspent_balance_crore.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0.00'} Cr</span>
+                  <span class="text-[9px] text-slate-500 block mt-0.5">Idle Treasury Funds</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Financial Ratios Table -->
+          <div class="lg:col-span-7 bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="calculator" class="w-4 h-4 text-cyan-400"></i>
+              Financial Ratio Integrity & Formulas
+            </h3>
+            <p class="text-xs text-slate-400">Zero-hallucination policy: Ratios requiring unavailable denominators are strictly flagged NOT AVAILABLE.</p>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-command-dark text-slate-400 text-[10px] uppercase font-semibold border-b border-command-border">
+                  <tr>
+                    <th class="py-2 px-3">Metric / Ratio</th>
+                    <th class="py-2 px-3">Status</th>
+                    <th class="py-2 px-3">Calculated Value</th>
+                    <th class="py-2 px-3">Mathematical Formula</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-command-border/40 font-mono text-[11px]">
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-white">Expenditure Utilization Ratio</td>
+                    <td class="py-2.5 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] bg-slate-800 text-amber-400 border border-amber-800/40">NOT AVAILABLE</span></td>
+                    <td class="py-2.5 px-3 text-slate-500 italic font-sans text-[10px]">Data missing</td>
+                    <td class="py-2.5 px-3 text-slate-400 text-[10px] font-sans">Expenditure / Released Funds</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-white">Unspent Balance Ratio</td>
+                    <td class="py-2.5 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] bg-slate-800 text-amber-400 border border-amber-800/40">NOT AVAILABLE</span></td>
+                    <td class="py-2.5 px-3 text-slate-500 italic font-sans text-[10px]">Data missing</td>
+                    <td class="py-2.5 px-3 text-slate-400 text-[10px] font-sans">Unspent Balance / Released Funds</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-white">Average Annual Expenditure</td>
+                    <td class="py-2.5 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-800/40">COMPUTED</span></td>
+                    <td class="py-2.5 px-3 text-cyan-300 font-bold">₹${ratios.avg_expenditure_per_year_crore ? ratios.avg_expenditure_per_year_crore.value : (fin.avg_annual_expenditure_crore || 0).toFixed(2)} Cr</td>
+                    <td class="py-2.5 px-3 text-slate-400 text-[10px] font-sans">Total 4-Yr Expenditure / 4 Years</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-white">Cost per Completed Work</td>
+                    <td class="py-2.5 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-800/40">COMPUTED</span></td>
+                    <td class="py-2.5 px-3 text-sky-300 font-bold">₹${ratios.avg_cost_per_completed_work_lakhs ? ratios.avg_cost_per_completed_work_lakhs.value : (fin.cost_per_completed_work_lakhs || 0).toFixed(2)} Lakhs</td>
+                    <td class="py-2.5 px-3 text-slate-400 text-[10px] font-sans">Total Exp (₹ Lakhs) / Completed Works</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-sans font-medium text-white">Backlog Absorption Years</td>
+                    <td class="py-2.5 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-800/40">COMPUTED</span></td>
+                    <td class="py-2.5 px-3 text-amber-300 font-bold">${ratios.backlog_absorption_years ? ratios.backlog_absorption_years.value : (fin.backlog_absorption_years || 0).toFixed(2)} Years</td>
+                    <td class="py-2.5 px-3 text-slate-400 text-[10px] font-sans">Unspent Balance / Avg Annual Exp</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. INTERACTIVE FINANCIAL TREND CHART -->
+        <div class="bg-command-panel border border-command-border rounded-xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-command-border/60 pb-3">
+            <div>
+              <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="trending-up" class="w-4 h-4 text-cyan-400"></i>
+                Multi-Year Financial Trajectory & Trend Analysis
+              </h3>
+              <p class="text-xs text-slate-400">Interactive 4-year time series from FY 2016-17 to FY 2019-20</p>
+            </div>
+            <div class="flex items-center space-x-1 bg-command-dark p-1 rounded-lg border border-command-border text-xs">
+              <button onclick="setMacroTrendMetric('expenditure')" id="btn-metric-expenditure" class="px-2.5 py-1 rounded bg-sky-600 text-white font-semibold">Expenditure (₹ Cr)</button>
+              <button onclick="setMacroTrendMetric('works')" id="btn-metric-works" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Completed Works</button>
+              <button onclick="setMacroTrendMetric('cost_per_work')" id="btn-metric-cost_per_work" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">Cost / Work (₹ Lakhs)</button>
+            </div>
+          </div>
+
+          <div class="h-64 w-full relative">
+            <canvas id="macroTrendChartCanvas"></canvas>
+          </div>
+
+          <!-- Yearly breakdown table underneath -->
+          <div class="overflow-x-auto pt-2">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-command-dark text-slate-400 text-[10px] uppercase font-semibold border-b border-command-border">
+                <tr>
+                  <th class="py-2 px-3">Financial Year</th>
+                  <th class="py-2 px-3">Expenditure (₹ Cr)</th>
+                  <th class="py-2 px-3">Completed Works</th>
+                  <th class="py-2 px-3">Cost per Work (₹ Lakhs)</th>
+                  <th class="py-2 px-3">Expenditure Trend / Change</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-command-border/40 font-mono text-[11px]">
+                ${(d.yearly_performance || []).map((y, idx, arr) => {
+                  let changeStr = 'Baseline Year';
+                  if (idx > 0) {
+                    const prev = arr[idx - 1].expenditure_crore;
+                    if (prev > 0) {
+                      const diff = y.expenditure_crore - prev;
+                      const pct = (diff / prev) * 100;
+                      changeStr = `${pct >= 0 ? '+' : ''}${pct.toFixed(1)}% (${diff >= 0 ? '+' : ''}₹${diff.toFixed(1)} Cr)`;
+                    }
+                  }
+                  return `
+                    <tr>
+                      <td class="py-2 px-3 font-sans font-semibold text-white">${y.financial_year}</td>
+                      <td class="py-2 px-3 text-cyan-300">₹${y.expenditure_crore.toFixed(2)} Cr</td>
+                      <td class="py-2 px-3 text-emerald-300">${y.works_completed.toLocaleString('en-IN')}</td>
+                      <td class="py-2 px-3 text-sky-300">₹${y.cost_per_work_lakhs.toFixed(2)} Lakhs</td>
+                      <td class="py-2 px-3 ${changeStr.startsWith('+') ? 'text-emerald-400' : changeStr.startsWith('-') ? 'text-rose-400' : 'text-slate-400'}">${changeStr}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 6. COMPARE WITH MODEL BASELINE TABLE -->
+        <div class="bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-command-border/60 pb-3">
+            <div>
+              <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="scale" class="w-4 h-4 text-cyan-400"></i>
+                Empirical Baseline Deviation Analysis
+              </h3>
+              <p class="text-xs text-slate-400">Comparison of ${ov.state}'s 10 ML features against national empirical median baselines</p>
+            </div>
+            <span class="text-[10px] text-slate-400 font-mono">Dataset: 37 National Entities</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-command-dark text-slate-400 text-[10px] uppercase font-semibold border-b border-command-border">
+                <tr>
+                  <th class="py-2.5 px-3">Feature Indicator</th>
+                  <th class="py-2.5 px-3">Category</th>
+                  <th class="py-2.5 px-3">State Actual Value</th>
+                  <th class="py-2.5 px-3">Model Baseline (Median)</th>
+                  <th class="py-2.5 px-3">Deviation</th>
+                  <th class="py-2.5 px-3">% Deviation</th>
+                  <th class="py-2.5 px-3 text-right">Risk Impact</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-command-border/40 font-mono text-[11px]">
+                ${baselines.map(b => {
+                  const contribColor = b.contribution === 'HIGH' ? 'bg-rose-950 text-rose-300 border-rose-800'
+                                     : b.contribution === 'MEDIUM' ? 'bg-amber-950 text-amber-300 border-amber-800'
+                                     : 'bg-slate-800 text-slate-400 border-slate-700';
+                  return `
+                    <tr class="hover:bg-slate-800/40">
+                      <td class="py-2.5 px-3 font-sans font-medium text-white">${b.feature_name}</td>
+                      <td class="py-2.5 px-3 font-sans text-[10px] text-slate-400">${b.category}</td>
+                      <td class="py-2.5 px-3 font-bold text-cyan-300">${typeof b.actual_value === 'number' ? b.actual_value.toFixed(2) : b.actual_value}</td>
+                      <td class="py-2.5 px-3 text-slate-400">${typeof b.model_baseline === 'number' ? b.model_baseline.toFixed(2) : b.model_baseline}</td>
+                      <td class="py-2.5 px-3 ${b.deviation >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${b.deviation >= 0 ? '+' : ''}${b.deviation.toFixed(2)}</td>
+                      <td class="py-2.5 px-3 ${b.deviation_pct >= 0 ? 'text-amber-300' : 'text-slate-400'}">${b.deviation_pct >= 0 ? '+' : ''}${b.deviation_pct.toFixed(1)}%</td>
+                      <td class="py-2.5 px-3 text-right font-sans">
+                        <span class="px-2 py-0.5 rounded text-[9px] font-bold border ${contribColor}">${b.contribution}</span>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 7. SECTOR DISTRIBUTION & INFRASTRUCTURE PRIORITIES -->
+        <div class="bg-command-panel border border-command-border rounded-xl p-5 space-y-4">
+          <div class="border-b border-command-border/60 pb-3">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-cyan-400"></i>
+              Sectoral Expenditure Allocation
+            </h3>
+            <p class="text-xs text-slate-400">Share of MPLADS funds allocated by development category</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+            ${[
+              { name: 'Roads, Bridges & Pathways', key: 'roads_and_pathways_pct', color: 'bg-cyan-500' },
+              { name: 'Community Infrastructure & Education', key: 'community_infra_and_education_pct', color: 'bg-blue-500' },
+              { name: 'Drinking Water Facilities', key: 'drinking_water_pct', color: 'bg-sky-500' },
+              { name: 'Public Health & Sanitation', key: 'sanitation_and_public_health_pct', color: 'bg-teal-500' },
+              { name: 'Other Public Facilities', key: 'other_public_facilities_pct', color: 'bg-indigo-500' },
+              { name: 'Miscellaneous & Other Works', key: 'miscellaneous_pct', color: 'bg-purple-500' },
+            ].map(sec => {
+              const val = sectors[sec.key] || 0;
+              return `
+                <div class="bg-command-dark p-3 rounded-lg border border-command-border/60 space-y-2">
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-300 font-medium">${sec.name}</span>
+                    <span class="font-mono font-bold text-white">${val.toFixed(1)}%</span>
+                  </div>
+                  <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div class="${sec.color} h-full" style="width: ${Math.min(100, val)}%"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- 8. VERIFICATION RECOMMENDATIONS & PROVENANCE -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Audit Recommendations -->
+          <div class="lg:col-span-6 bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="check-square" class="w-4 h-4 text-cyan-400"></i>
+              Actionable Verification Recommendations
+            </h3>
+            <p class="text-xs text-slate-400">Prescribed focus areas for District Collectors & Vigilance Officers:</p>
+            <ul class="space-y-2 pt-1 text-xs text-slate-300">
+              ${recs.map(r => `
+                <li class="p-2.5 rounded-lg bg-command-dark border border-command-border/60 flex items-start gap-2">
+                  <i data-lucide="arrow-right-circle" class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5"></i>
+                  <span>${r}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+
+          <!-- Provenance & Data Limitations -->
+          <div class="lg:col-span-6 bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+              Data Provenance & Audit Limitations
+            </h3>
+            <div class="text-xs space-y-2 text-slate-300">
+              <div class="bg-command-dark p-3 rounded-lg border border-command-border/60 space-y-1">
+                <span class="text-[10px] text-slate-400 uppercase block font-semibold">Primary Government Source:</span>
+                <span class="text-white font-medium block">${prov.source_name || 'Ministry of Statistics and Programme Implementation (MoSPI)'}</span>
+                <span class="text-[10px] text-cyan-400 font-mono block truncate">${prov.source_url || 'https://www.data.gov.in / https://mplads.gov.in'}</span>
+              </div>
+              <div class="bg-command-dark p-3 rounded-lg border border-command-border/60 space-y-1">
+                <span class="text-[10px] text-slate-400 uppercase block font-semibold">Underlying Ingested Files:</span>
+                <ul class="list-disc list-inside text-[11px] font-mono text-slate-400">
+                  ${(prov.original_files || []).map(f => `<li>${f}</li>`).join('')}
+                </ul>
+              </div>
+              <div class="p-3 rounded-lg bg-amber-950/20 border border-amber-800/30 text-[11px] text-amber-200">
+                <strong>Statutory Notice:</strong> "Observed Data" reflects official disclosures as published. "Model-Derived Analysis" represents computational indicators to support audit prioritization.
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Render chart for the state
+      setTimeout(() => {
+        renderMacroTrendChart(d.yearly_performance || [], state.macroTrendMetric);
+      }, 50);
+    }
+
+    function setMacroTrendMetric(metric) {
+      state.macroTrendMetric = metric;
+      ['expenditure', 'works', 'cost_per_work'].forEach(m => {
+        const btn = document.getElementById('btn-metric-' + m);
+        if (!btn) return;
+        if (m === metric) {
+          btn.className = 'px-2.5 py-1 rounded bg-sky-600 text-white font-semibold';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded text-slate-400 hover:text-white';
+        }
+      });
+
+      if (state.selectedMacroDossier && state.selectedMacroDossier.yearly_performance) {
+        renderMacroTrendChart(state.selectedMacroDossier.yearly_performance, metric);
+      }
+    }
+
+    function renderMacroTrendChart(timeSeries, metric) {
+      const canvas = document.getElementById('macroTrendChartCanvas');
+      if (!canvas) return;
+
+      if (state.macroTrendChartInstance) {
+        state.macroTrendChartInstance.destroy();
+        state.macroTrendChartInstance = null;
+      }
+
+      const labels = timeSeries.map(y => y.financial_year);
+      let dataVals = [];
+      let labelName = '';
+      let color = '#0284c7';
+      let bgColor = 'rgba(2, 132, 199, 0.2)';
+
+      if (metric === 'expenditure') {
+        dataVals = timeSeries.map(y => y.expenditure_crore);
+        labelName = 'Expenditure (₹ Cr)';
+        color = '#06b6d4';
+        bgColor = 'rgba(6, 182, 212, 0.2)';
+      } else if (metric === 'works') {
+        dataVals = timeSeries.map(y => y.works_completed);
+        labelName = 'Completed Works';
+        color = '#10b981';
+        bgColor = 'rgba(16, 185, 129, 0.2)';
+      } else {
+        dataVals = timeSeries.map(y => y.cost_per_work_lakhs);
+        labelName = 'Cost per Work (₹ Lakhs)';
+        color = '#f59e0b';
+        bgColor = 'rgba(245, 158, 11, 0.2)';
+      }
+
+      const ctx = canvas.getContext('2d');
+      state.macroTrendChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: labelName,
+            data: dataVals,
+            backgroundColor: bgColor,
+            borderColor: color,
+            borderWidth: 2,
+            borderRadius: 6,
+            barThickness: 36
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const val = context.raw;
+                  if (metric === 'expenditure') return ` Expenditure: ₹${val.toFixed(2)} Cr`;
+                  if (metric === 'works') return ` Completed: ${val.toLocaleString('en-IN')} Works`;
+                  return ` Cost/Work: ₹${val.toFixed(2)} Lakhs`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 11 } },
+              grid: { color: 'rgba(30, 41, 59, 0.4)' }
+            },
+            y: {
+              ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 11 } },
+              grid: { color: 'rgba(30, 41, 59, 0.4)' },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function renderMacroStatesTable(statesList) {
+      const container = document.getElementById('macroStatesTableContainer');
+      if (!container) return;
+
+      const tierBadge = {
+        CRITICAL_BOTTLENECK: 'bg-rose-950 text-rose-300 border-rose-800',
+        HIGH_BACKLOG: 'bg-orange-950 text-orange-300 border-orange-800',
+        WATCH_MODERATE: 'bg-amber-950 text-amber-300 border-amber-800',
+        LOW_RISK: 'bg-emerald-950 text-emerald-300 border-emerald-800',
+      };
+
+      container.innerHTML = `
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-command-dark text-slate-400 uppercase tracking-wider font-semibold border-b border-command-border">
+            <tr>
+              <th class="py-2.5 px-3">State / Union Territory</th>
+              <th class="py-2.5 px-3">Analytical Risk Indicator</th>
+              <th class="py-2.5 px-3">Risk Tier</th>
+              <th class="py-2.5 px-3">4-Yr Expenditure</th>
+              <th class="py-2.5 px-3">Unspent Balance</th>
+              <th class="py-2.5 px-3">Completed Works</th>
+              <th class="py-2.5 px-3">Backlog Absorption</th>
+              <th class="py-2.5 px-3 text-right">Inspect Dossier</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-command-border/40 font-mono">
+            ${statesList.map(s => {
+              const score = s.anomaly_score || 0;
+              const isSelected = s.state === state.selectedMacroState;
+              return `
+                <tr onclick="loadMacroStateDossier('${s.state}')" class="cursor-pointer hover:bg-slate-800/40 transition ${isSelected ? 'bg-sky-950/25' : ''}">
+                  <td class="py-3 px-3 font-sans font-bold text-white flex items-center gap-2">
+                    ${s.state}
+                  </td>
+                  <td class="py-3 px-3 font-bold ${score >= 70 ? 'text-rose-400' : score >= 50 ? 'text-amber-400' : 'text-emerald-400'}">
+                    ${score.toFixed(2)}
+                  </td>
+                  <td class="py-3 px-3 font-sans">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${tierBadge[s.risk_tier] || tierBadge.LOW_RISK}">
+                      ${s.risk_tier}
+                    </span>
+                  </td>
+                  <td class="py-3 px-3 text-cyan-300">₹${s.total_expenditure_4yr_crore ? s.total_expenditure_4yr_crore.toFixed(2) : '0.00'} Cr</td>
+                  <td class="py-3 px-3 text-amber-300">₹${s.unspent_balance_crore ? s.unspent_balance_crore.toFixed(2) : '0.00'} Cr</td>
+                  <td class="py-3 px-3 text-emerald-300">${s.total_works_completed_4yr ? s.total_works_completed_4yr.toLocaleString('en-IN') : '0'}</td>
+                  <td class="py-3 px-3 ${s.backlog_absorption_years > 2.0 ? 'text-rose-400' : 'text-slate-300'}">${s.backlog_absorption_years ? s.backlog_absorption_years.toFixed(2) : '0.00'} yrs</td>
+                  <td class="py-3 px-3 text-right font-sans">
+                    <button onclick="event.stopPropagation(); loadMacroStateDossier('${s.state}')" class="px-2.5 py-1 rounded bg-slate-800 text-cyan-400 hover:bg-slate-700 text-xs">
+                      Dossier &rarr;
+                    </button>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function sortMacroTable(criteria) {
+      state.macroSortBy = criteria;
+      try {
+        const res = await fetch(`/api/v1/macro/states?sort_by=${criteria}`).then(r => r.json());
+        state.macroStates = res;
+        renderMacroStatesTable(res);
+        populateMacroStateSelect(res);
+      } catch (e) {
+        console.error('Error sorting table:', e);
       }
     }
 

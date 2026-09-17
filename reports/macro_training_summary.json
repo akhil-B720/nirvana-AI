@@ -14,6 +14,42 @@
       "1": "HIGH_VOLUME_ABSORPTION",
       "2": "MODERATE_BALANCED_EXECUTION",
       "3": "HIGH_VOLATILITY_EXPENDITURE"
+    },
+    "baselines_mean": {
+      "total_expenditure_4yr_crore": 411.769,
+      "total_works_completed_4yr": 9426.378,
+      "cost_per_work_lakhs": 13.415,
+      "unspent_balance_crore": 121.085,
+      "backlog_absorption_years": 1.171,
+      "expenditure_volatility_cv": 0.349,
+      "covid_drop_19_20_pct": 55.114,
+      "infrastructure_dominance_pct": 30.011,
+      "social_infrastructure_pct": 26.101,
+      "sector_hhi": 0.321
+    },
+    "baselines_median": {
+      "total_expenditure_4yr_crore": 227.04,
+      "total_works_completed_4yr": 5733.0,
+      "cost_per_work_lakhs": 5.79,
+      "unspent_balance_crore": 71.34,
+      "backlog_absorption_years": 1.17,
+      "expenditure_volatility_cv": 0.296,
+      "covid_drop_19_20_pct": 54.15,
+      "infrastructure_dominance_pct": 28.875,
+      "social_infrastructure_pct": 21.85,
+      "sector_hhi": 0.292
+    },
+    "baselines_std": {
+      "total_expenditure_4yr_crore": 479.477,
+      "total_works_completed_4yr": 12102.86,
+      "cost_per_work_lakhs": 20.68,
+      "unspent_balance_crore": 139.366,
+      "backlog_absorption_years": 0.464,
+      "expenditure_volatility_cv": 0.242,
+      "covid_drop_19_20_pct": 23.285,
+      "infrastructure_dominance_pct": 15.377,
+      "social_infrastructure_pct": 15.392,
+      "sector_hhi": 0.127
     }
   },
   "risk_distribution": {
@@ -88,5 +124,5 @@
       "risk_tier": "HIGH_BACKLOG"
     }
   ],
-  "timestamp": "2026-09-17T17:46:35.638203+00:00"
+  "timestamp": "2026-09-17T18:22:48.325832+00:00"
 }
