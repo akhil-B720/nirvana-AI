@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: nirvana-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nirvana
+      POSTGRES_PASSWORD: nirvana_secure_password
+      POSTGRES_DB: nirvana_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nirvana -d nirvana_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    container_name: nirvana-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://nirvana:nirvana_secure_password@postgres:5432/nirvana_db
+      - SECRET_KEY=production_nirvana_secret_key_change_me_987216
+      - APP_ENV=production
+      - DEBUG=False
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/app/uploads
+      - ./reports:/app/reports
+      - ./models:/app/models
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend.Dockerfile
+    container_name: nirvana-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

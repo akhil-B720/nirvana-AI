@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NIRVANA — National Infrastructure Reality & Verification Network using AI</title>
+  
+  <!-- Fonts & MapLibre CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  
+  <!-- Tailwind CSS & Three.js & MapLibre JS & Lucide -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            command: {
+              dark: '#070b14',
+              panel: '#0f172a',
+              border: '#1e293b',
+              accent: '#0284c7',
+              cyan: '#06b6d4',
+              success: '#10b981',
+              warning: '#f59e0b',
+              danger: '#ef4444',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #070b14; color: #f1f5f9; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0b1120; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#070b14] text-slate-100">
+
+  <!-- ================================================================= -->
+  <!-- 1. TOP COMMAND HEADER -->
+  <!-- ================================================================= -->
+  <header class="border-b border-command-border bg-command-dark/95 sticky top-0 z-40 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-sky-950 border border-sky-800 rounded-lg text-cyan-400">
+            <i data-lucide="shield" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-lg tracking-wider text-white">NIRVANA</span>
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-blue-950 text-blue-300 border border-blue-800 rounded">SIH26102</span>
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-slate-800 text-slate-300 rounded">TEAM TYRANTS</span>
+            </div>
+            <p className="text-[11px] text-slate-400 font-medium hidden sm:block">
+              National Infrastructure Reality & Verification Network using AI
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <button onclick="openUploadModal()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+            <i data-lucide="upload" class="w-3.5 h-3.5 text-cyan-400"></i>
+            <span>Upload Evidence</span>
+          </button>
+          <button onclick="toggleAssistant()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-blue-600 hover:bg-blue-500 text-white shadow-sm transition">
+            <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+            <span>AI Assistant</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="border-t border-command-border/60 bg-command-panel/80 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto flex space-x-1 overflow-x-auto py-1" id="navTabs">
+        <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-cyan-400 bg-sky-950/50 border border-sky-800/60">
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 inline mr-1.5"></i>Command Center
+        </button>
+        <button onclick="switchTab('map')" id="tab-map" class="tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 inline mr-1.5"></i>GIS & 3D Map
+        </button>
+        <button onclick="switchTab('projects')" id="tab-projects" class="tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white">
+          <i data-lucide="file-text" class="w-3.5 h-3.5 inline mr-1.5"></i>Project Registry
+        </button>
+        <button onclick="switchTab('reality-gap')" id="tab-reality-gap" class="tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white">
+          <i data-lucide="alert-triangle" class="w-3.5 h-3.5 inline mr-1.5"></i>Reality Gap
+        </button>
+        <button onclick="switchTab('cases')" id="tab-cases" class="tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white">
+          <i data-lucide="check-circle-2" class="w-3.5 h-3.5 inline mr-1.5"></i>Verification Cases
+        </button>
+        <button onclick="switchTab('models')" id="tab-models" class="tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white">
+          <i data-lucide="cpu" class="w-3.5 h-3.5 inline mr-1.5"></i>Model Registry
+        </button>
+      </div>
+    </nav>
+
+    <!-- Statutory Decision-support Warning -->
+    <div class="bg-amber-950/40 border-b border-amber-800/30 px-4 py-1 text-center">
+      <p class="text-[11px] text-amber-200/90 font-medium">
+        <span class="font-semibold text-amber-400">DECISION-SUPPORT NOTICE:</span> AI-generated risk indicators are decision-support signals and do not constitute proof of fraud, corruption, or wrongdoing.
+      </p>
+    </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- 2. MAIN CONTENT -->
+  <!-- ================================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- KPI Metric Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="kpiCards">
+      <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+        <div class="text-[11px] font-medium text-slate-400 uppercase">Total Works</div>
+        <div class="text-2xl font-bold font-mono text-white mt-1" id="kpi-total">--</div>
+        <span class="text-[9px] font-mono text-slate-400">Sanctioned</span>
+      </div>
+      <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+        <div class="text-[11px] font-medium text-slate-400 uppercase">Monitored</div>
+        <div class="text-2xl font-bold font-mono text-emerald-400 mt-1" id="kpi-monitored">--</div>
+        <span class="text-[9px] font-mono text-emerald-400/80">Active In Pipeline</span>
+      </div>
+      <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+        <div class="text-[11px] font-medium text-slate-400 uppercase">High Risk</div>
+        <div class="text-2xl font-bold font-mono text-amber-400 mt-1" id="kpi-high">--</div>
+        <span class="text-[9px] font-mono text-amber-400/80">Review Advised</span>
+      </div>
+      <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+        <div class="text-[11px] font-medium text-slate-400 uppercase">Critical</div>
+        <div class="text-2xl font-bold font-mono text-rose-400 mt-1" id="kpi-critical">--</div>
+        <span class="text-[9px] font-mono text-rose-400/80">Priority Audit</span>
+      </div>
+      <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+        <div class="text-[11px] font-medium text-slate-400 uppercase">Timeline Delayed</div>
+        <div class="text-2xl font-bold font-mono text-sky-400 mt-1" id="kpi-delayed">--</div>
+        <span class="text-[9px] font-mono text-sky-400/80">S-Curve Slippage</span>
+      </div>
+      <div class="p-4 rounded-xl border border-command-border bg-command-panel/70">
+        <div class="text-[11px] font-medium text-slate-400 uppercase">Reality Gaps</div>
+        <div class="text-2xl font-bold font-mono text-cyan-400 mt-1" id="kpi-gaps">--</div>
+        <span class="text-[9px] font-mono text-cyan-400/80">Reported ≠ Ground</span>
+      </div>
+    </div>
+
+    <!-- TAB 1: COMMAND CENTER (OVERVIEW) -->
+    <div id="view-overview" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- GIS Map Section -->
+        <div class="lg:col-span-7 flex flex-col space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="map" class="w-4 h-4 text-cyan-400"></i>
+              Geospatial Infrastructure Reality Map
+            </h3>
+            <div class="flex items-center space-x-1 bg-command-panel p-1 rounded-lg border border-command-border text-[10px]">
+              <button onclick="setMapMode('RISK')" id="mapMode-RISK" class="px-2 py-0.5 rounded bg-sky-600 text-white font-bold">RISK</button>
+              <button onclick="setMapMode('REALITY_GAP')" id="mapMode-REALITY_GAP" class="px-2 py-0.5 rounded text-slate-400">GAP</button>
+              <button onclick="setMapMode('PROGRESS')" id="mapMode-PROGRESS" class="px-2 py-0.5 rounded text-slate-400">PROGRESS</button>
+            </div>
+          </div>
+          <div id="gisMapContainer" class="w-full h-[500px] rounded-xl border border-command-border overflow-hidden relative"></div>
+        </div>
+
+        <!-- Selected Asset Intelligence Panel -->
+        <div class="lg:col-span-5 flex flex-col space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i>
+              Selected Asset Intelligence
+            </h3>
+            <button onclick="switchTab('projects')" class="text-[11px] text-cyan-400 hover:underline">Full Dossier &rarr;</button>
+          </div>
+
+          <div id="selectedAssetPanel" class="bg-command-panel border border-command-border rounded-xl p-5 space-y-4">
+            <div class="text-center py-12 text-slate-500 text-xs">
+              Loading verified project intelligence...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Registry Table Preview -->
+      <div class="space-y-3">
+        <h3 class="text-xs font-semibold text-white uppercase tracking-wider">Sanctioned Public Works Registry</h3>
+        <div class="bg-command-panel border border-command-border rounded-xl p-4" id="overviewTableWrapper"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: FULL GIS MAP -->
+    <div id="view-map" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-semibold text-white uppercase tracking-wider">Full-Screen Geospatial Command View</h3>
+      </div>
+      <div id="fullMapContainer" class="w-full h-[650px] rounded-xl border border-command-border overflow-hidden"></div>
+    </div>
+
+    <!-- TAB 3: PROJECT REGISTRY & DEEP DIVE -->
+    <div id="view-projects" class="hidden space-y-6">
+      <div id="projectDetailWrapper"></div>
+    </div>
+
+    <!-- TAB 4: REALITY GAP MONITOR -->
+    <div id="view-reality-gap" class="hidden space-y-6">
+      <div class="bg-command-panel border border-command-border rounded-xl p-5">
+        <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
+          Reality Gap Analytical Monitor
+        </h3>
+        <p class="text-xs text-slate-400">
+          The Reality Gap quantifies statistical and empirical divergence between contractor reported claims and ground reality evidence.
+          Scores are scaled from 0-30 (NORMAL), 31-60 (WATCH), 61-80 (HIGH), 81-100 (CRITICAL).
+        </p>
+        <div class="mt-2 text-[11px] text-amber-300 font-medium">
+          "This is a prototype/system-defined analytical score and is not an official government metric."
+        </div>
+      </div>
+      <div id="realityGapList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+
+    <!-- TAB 5: VERIFICATION CASES -->
+    <div id="view-cases" class="hidden space-y-6">
+      <div class="bg-command-panel border border-command-border rounded-xl p-5">
+        <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400"></i>
+          Human-in-the-Loop Field Verification Registry
+        </h3>
+        <p class="text-xs text-slate-400">
+          AI triggers decision-support anomaly signals. Authorized nodal vigilance officers conduct and certify ground verification audits.
+        </p>
+      </div>
+      <div class="bg-command-panel border border-command-border rounded-xl p-4 overflow-x-auto" id="casesTableWrapper"></div>
+    </div>
+
+    <!-- TAB 6: MODEL REGISTRY -->
+    <div id="view-models" class="hidden space-y-6">
+      <div class="bg-command-panel border border-command-border rounded-xl p-5">
+        <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2">
+          <i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i>
+          Operational Machine Learning Suite & Registry
+        </h3>
+        <p class="text-xs text-slate-400">
+          Strict zero-hallucination policy. Models without ground-truth labels remain strictly categorized as baseline heuristics or NOT_TRAINED.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="modelsListWrapper"></div>
+    </div>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- 3. SLIDE-OVER CONTEXTUAL AI ASSISTANT -->
+  <!-- ================================================================= -->
+  <div id="assistantDrawer" class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-[#0a0f1d] border-l border-command-border shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300">
+    <div class="p-4 border-b border-command-border flex items-center justify-between bg-command-panel">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="bot" class="w-5 h-5 text-cyan-400"></i>
+        <div>
+          <h3 class="text-sm font-semibold text-white">NIRVANA AI Assistant</h3>
+          <p class="text-[10px] text-slate-400">Grounded DB Retrieval | Zero Hallucination</p>
+        </div>
+      </div>
+      <button onclick="toggleAssistant()" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <div class="p-2 bg-blue-950/60 border-b border-blue-900/40 text-[11px] text-blue-200 px-4" id="assistantScopeBanner">
+      Scope: <strong id="assistantScopeText">System Wide</strong>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-4 space-y-3" id="assistantChatLog">
+      <div class="bg-command-panel border border-command-border rounded-lg p-3 text-xs text-slate-200 leading-relaxed">
+        Hello. I am NIRVANA's Contextual AI Assistant. I answer queries strictly from verified database records and active analytical anomaly detectors. How may I assist your verification review?
+        <div class="mt-2 pt-2 border-t border-command-border text-[10px] text-slate-400 font-mono">
+          Data Citation: system.nirvana_database
+        </div>
+      </div>
+    </div>
+
+    <div class="p-2 border-t border-command-border/60 bg-command-panel/50 flex flex-wrap gap-1">
+      <button onclick="askPrompt('Why is this project high risk?')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Why flagged?</button>
+      <button onclick="askPrompt('What should be verified?')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Prescribed actions</button>
+      <button onclick="askPrompt('What data is missing?')" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Missing data</button>
+    </div>
+
+    <div class="p-3 border-t border-command-border bg-command-panel">
+      <form onsubmit="handleAssistantSubmit(event)" class="flex items-center space-x-2">
+        <input type="text" id="assistantInput" placeholder="Ask about project risks or data..." class="flex-1 bg-command-dark border border-command-border rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+        <button type="submit" class="p-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white"><i data-lucide="send" class="w-4 h-4"></i></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- 4. EVIDENCE UPLOAD MODAL -->
+  <!-- ================================================================= -->
+  <div id="uploadModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4">
+    <div class="bg-command-panel border border-command-border rounded-xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="closeUploadModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+      <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2">
+        <i data-lucide="upload" class="w-4 h-4 text-cyan-400"></i>
+        Upload Field Ground Evidence
+      </h3>
+      <p class="text-xs text-slate-400 mb-4">Every file is hashed (SHA-256) and anchored to the project audit trail.</p>
+
+      <form onsubmit="handleUploadSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Select Project</label>
+          <select id="uploadProjectSelect" class="w-full bg-command-dark border border-command-border rounded-lg p-2 text-slate-200"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-300 font-medium mb-1">Observed Progress (%)</label>
+            <input type="number" id="uploadObsProgress" min="0" max="100" placeholder="e.g. 80" class="w-full bg-command-dark border border-command-border rounded-lg p-2 text-slate-200">
+          </div>
+          <div>
+            <label class="block text-slate-300 font-medium mb-1">Source</label>
+            <select id="uploadSource" class="w-full bg-command-dark border border-command-border rounded-lg p-2 text-slate-200">
+              <option value="FIELD_INSPECTION">Field Photo</option>
+              <option value="DRONE_SURVEY">Drone Survey</option>
+              <option value="CITIZEN_SUBMISSION">Citizen Capture</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">File (JPEG, PNG, or PDF)</label>
+          <input type="file" id="uploadFile" accept=".jpg,.jpeg,.png,.pdf" required class="w-full bg-command-dark border border-command-border rounded-lg p-2 text-slate-300">
+        </div>
+        <div class="pt-2 flex justify-end space-x-2">
+          <button type="button" onclick="closeUploadModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300">Cancel</button>
+          <button type="submit" id="uploadBtn" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold">Upload Evidence</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- 5. STATUTORY FOOTER -->
+  <!-- ================================================================= -->
+  <footer class="border-t border-command-border bg-command-dark py-4 text-xs text-slate-500 mt-12">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <span>NIRVANA | Team TYRANTS | Smart India Hackathon SIH26102</span>
+      <span class="text-[11px] text-slate-400">
+        "AI-generated risk indicators are decision-support signals and do not constitute proof of fraud, corruption, or wrongdoing."
+      </span>
+    </div>
+  </footer>
+
+  <!-- ================================================================= -->
+  <!-- 6. APPLICATION CLIENT-SIDE CONTROLLER -->
+  <!-- ================================================================= -->
+  <script>
+    let state = {
+      projects: [],
+      analytics: null,
+      selectedProjectId: null,
+      selectedProjectDetail: null,
+      activeTab: 'overview',
+      mapMode: 'RISK',
+      mapInstance: null,
+      mapMarkers: [],
+      twinScene: null,
+      twinRenderer: null,
+      twinCamera: null,
+      twinGroup: null,
+      twinAnimFrame: null,
+      simProgress: 50,
+      twinMode: 'REPORTED'
+    };
+
+    // Load initial data
+    async function initApp() {
+      try {
+        const [overviewRes, projectsRes] = await Promise.all([
+          fetch('/api/v1/analytics/overview').then(r => r.json()),
+          fetch('/api/v1/projects').then(r => r.json())
+        ]);
+
+        state.analytics = overviewRes;
+        state.projects = projectsRes;
+
+        // Render KPIs
+        document.getElementById('kpi-total').textContent = overviewRes.total_projects;
+        document.getElementById('kpi-monitored').textContent = overviewRes.projects_monitored;
+        document.getElementById('kpi-high').textContent = overviewRes.high_risk_projects;
+        document.getElementById('kpi-critical').textContent = overviewRes.critical_risk_projects;
+        document.getElementById('kpi-delayed').textContent = overviewRes.delayed_projects;
+        document.getElementById('kpi-gaps').textContent = overviewRes.active_reality_gaps;
+
+        // Populate upload select
+        const sel = document.getElementById('uploadProjectSelect');
+        sel.innerHTML = state.projects.map(p => `<option value="${p.project_id}">[${p.project_id}] ${p.project_name.slice(0, 40)}...</option>`).join('');
+
+        if (state.projects.length > 0) {
+          selectProject(state.projects[0].project_id);
+        }
+
+        renderOverviewTable();
+        initMap('gisMapContainer');
+        lucide.createIcons();
+      } catch (e) {
+        console.error('Initialization error:', e);
+      }
+    }
+
+    // Tab switcher
+    function switchTab(tab) {
+      state.activeTab = tab;
+      ['overview', 'map', 'projects', 'reality-gap', 'cases', 'models'].forEach(t => {
+        const el = document.getElementById('view-' + t);
+        const btn = document.getElementById('tab-' + t);
+        if (t === tab) {
+          el.classList.remove('hidden');
+          btn.className = 'tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-cyan-400 bg-sky-950/50 border border-sky-800/60';
+        } else {
+          el.classList.add('hidden');
+          btn.className = 'tab-btn px-3.5 py-2 text-xs font-medium rounded-md text-slate-400 hover:text-white';
+        }
+      });
+
+      if (tab === 'reality-gap') renderRealityGapList();
+      if (tab === 'cases') loadVerificationCases();
+      if (tab === 'models') loadModelRegistry();
+      if (tab === 'map') {
+        setTimeout(() => initMap('fullMapContainer'), 100);
+      }
+      lucide.createIcons();
+    }
+
+    // Select and inspect project
+    async function selectProject(id) {
+      state.selectedProjectId = id;
+      document.getElementById('assistantScopeText').textContent = id;
+      try {
+        const detail = await fetch(`/api/v1/projects/${id}`).then(r => r.json());
+        state.selectedProjectDetail = detail;
+        renderSelectedPanel(detail);
+        renderProjectDetailView(detail);
+        initDigitalTwin3D(detail);
+        lucide.createIcons();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Render selected panel in Overview
+    function renderSelectedPanel(p) {
+      const tierStyles = {
+        CRITICAL: 'bg-rose-950 text-rose-300 border-rose-800',
+        HIGH: 'bg-orange-950 text-orange-300 border-orange-800',
+        WATCH: 'bg-amber-950 text-amber-300 border-amber-800',
+        NORMAL: 'bg-emerald-950 text-emerald-300 border-emerald-800',
+      };
+      const tier = p.risk_tier || 'NORMAL';
+      const hasObs = p.observed_progress !== null && p.observed_progress !== undefined;
+      const factors = (p.risk_summary && p.risk_summary.contributing_factors) || [];
+
+      document.getElementById('selectedAssetPanel').innerHTML = `
+        <div class="flex items-center justify-between pb-3 border-b border-command-border/60">
+          <div>
+            <span class="font-mono text-xs text-cyan-400 font-bold">${p.project_id}</span>
+            <h4 class="text-sm font-bold text-white line-clamp-1">${p.project_name}</h4>
+            <p class="text-[11px] text-slate-400">${p.district}, ${p.state}</p>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${tierStyles[tier]}">
+            ${tier} (${p.fused_risk_score ? p.fused_risk_score.toFixed(0) : 0})
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="bg-command-dark p-2.5 rounded border border-command-border/60">
+            <span class="text-slate-400 block text-[10px]">Reported Claim</span>
+            <span class="font-mono text-base font-bold text-cyan-400">${p.reported_progress.toFixed(0)}%</span>
+          </div>
+          <div class="bg-command-dark p-2.5 rounded border border-command-border/60">
+            <span class="text-slate-400 block text-[10px]">Observed Evidence</span>
+            ${hasObs ? `<span class="font-mono text-base font-bold text-emerald-400">${p.observed_progress.toFixed(0)}%</span>`
+                    : `<span class="text-[10px] text-amber-400 font-sans italic">DATA NOT AVAILABLE</span>`}
+          </div>
+        </div>
+
+        <div class="text-xs space-y-1">
+          <span class="text-slate-400 font-medium">Anomaly Triggers:</span>
+          ${factors.length > 0 ? `
+            <ul class="list-disc list-inside text-slate-300 text-[11px] space-y-1">
+              ${factors.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+          ` : `<p class="text-slate-500 text-[11px] italic">No anomalies detected.</p>`}
+        </div>
+
+        <button onclick="switchTab('projects')" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition text-center block">
+          Open 3D Digital Twin & Full Dossier &rarr;
+        </button>
+      `;
+    }
+
+    // Render Overview Project Table
+    function renderOverviewTable() {
+      const wrapper = document.getElementById('overviewTableWrapper');
+      wrapper.innerHTML = `
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-command-dark text-slate-400 uppercase tracking-wider font-semibold border-b border-command-border">
+            <tr>
+              <th class="py-2.5 px-3">Project ID</th>
+              <th class="py-2.5 px-3">Name & Sector</th>
+              <th class="py-2.5 px-3">Location</th>
+              <th class="py-2.5 px-3">Sanction (₹)</th>
+              <th class="py-2.5 px-3">Reported</th>
+              <th class="py-2.5 px-3">Observed</th>
+              <th class="py-2.5 px-3">Risk Tier</th>
+              <th class="py-2.5 px-3 text-right">Inspect</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-command-border/40 font-mono">
+            ${state.projects.map(p => `
+              <tr onclick="selectProject('${p.project_id}')" class="cursor-pointer hover:bg-slate-800/40 transition ${p.project_id === state.selectedProjectId ? 'bg-sky-950/20' : ''}">
+                <td class="py-3 px-3 font-semibold text-cyan-400 whitespace-nowrap">${p.project_id}</td>
+                <td class="py-3 px-3 font-sans max-w-xs truncate">
+                  <span class="text-white font-medium block truncate">${p.project_name}</span>
+                  <span class="text-[10px] text-slate-500 uppercase">${p.project_type}</span>
+                </td>
+                <td class="py-3 px-3 font-sans">${p.district}, ${p.state}</td>
+                <td class="py-3 px-3">₹${p.sanction_amount.toLocaleString('en-IN')}</td>
+                <td class="py-3 px-3 text-cyan-300 font-bold">${p.reported_progress.toFixed(0)}%</td>
+                <td class="py-3 px-3 font-sans">${p.observed_progress !== null && p.observed_progress !== undefined ? `<strong class="text-emerald-400 font-mono">${p.observed_progress.toFixed(0)}%</strong>` : '<span class="text-[10px] text-slate-500 italic">NOT AVAILABLE</span>'}</td>
+                <td class="py-3 px-3 font-sans"><span class="px-2 py-0.5 rounded text-[10px] font-bold border ${p.risk_tier === 'CRITICAL' ? 'bg-rose-950 text-rose-300 border-rose-800' : p.risk_tier === 'HIGH' ? 'bg-orange-950 text-orange-300 border-orange-800' : 'bg-emerald-950 text-emerald-300 border-emerald-800'}">${p.risk_tier || 'NORMAL'}</span></td>
+                <td class="py-3 px-3 text-right font-sans">
+                  <button onclick="selectProject('${p.project_id}'); switchTab('projects');" class="px-2 py-1 rounded bg-slate-800 text-cyan-400 hover:bg-slate-700">Dossier</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // MapLibre GIS Map Initialization
+    function initMap(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      container.innerHTML = '';
+      const map = new maplibregl.Map({
+        container: containerId,
+        style: {
+          version: 8,
+          sources: {
+            osm: {
+              type: 'raster',
+              tiles: ['https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png'],
+              tileSize: 256
+            }
+          },
+          layers: [{ id: 'osm-tiles', type: 'raster', source: 'osm' }]
+        },
+        center: [78.9629, 20.5937],
+        zoom: 4.2
+      });
+
+      map.addControl(new maplibregl.NavigationControl());
+
+      map.on('load', () => {
+        state.projects.forEach(p => {
+          if (p.latitude === null || p.longitude === null || p.latitude === undefined || p.longitude === undefined) return;
+
+          let color = '#10b981';
+          if (p.risk_tier === 'CRITICAL') color = '#ef4444';
+          else if (p.risk_tier === 'HIGH') color = '#f97316';
+          else if (p.risk_tier === 'WATCH') color = '#f59e0b';
+
+          const el = document.createElement('div');
+          el.className = 'cursor-pointer transform hover:scale-125 transition-transform flex flex-col items-center';
+          el.innerHTML = `
+            <div style="background-color: ${color}; box-shadow: 0 0 10px ${color};" class="w-4 h-4 rounded-full border-2 border-slate-900"></div>
+            <div class="mt-0.5 px-1 py-0.5 rounded bg-slate-900 text-[8px] font-mono text-slate-200 border border-slate-700">${p.project_id}</div>
+          `;
+          el.onclick = () => selectProject(p.project_id);
+
+          new maplibregl.Marker({ element: el })
+            .setLngLat([p.longitude, p.latitude])
+            .addTo(map);
+        });
+      });
+    }
+
+    function setMapMode(m) {
+      state.mapMode = m;
+      ['RISK', 'REALITY_GAP', 'PROGRESS'].forEach(mode => {
+        const btn = document.getElementById('mapMode-' + mode);
+        if (mode === m) {
+          btn.className = 'px-2 py-0.5 rounded bg-sky-600 text-white font-bold';
+        } else {
+          btn.className = 'px-2 py-0.5 rounded text-slate-400';
+        }
+      });
+      initMap('gisMapContainer');
+    }
+
+    // 3D Digital Twin Three.js Scene
+    function initDigitalTwin3D(p) {
+      const container = document.getElementById('twinCanvasContainer');
+      if (!container) return;
+
+      container.innerHTML = '';
+      const isObservedMissing = state.twinMode === 'OBSERVED' && (p.observed_progress === null || p.observed_progress === undefined);
+
+      if (isObservedMissing) {
+        container.innerHTML = `
+          <div class="text-center p-8">
+            <div class="w-12 h-12 rounded-full bg-slate-800 mx-auto flex items-center justify-center mb-2 border border-slate-700">
+              <i data-lucide="info" class="w-6 h-6 text-amber-400"></i>
+            </div>
+            <h4 class="text-sm font-semibold text-white">Physical Evidence Unavailable</h4>
+            <p class="text-xs text-slate-400 max-w-sm mt-1">No verified ground survey photo on record. NIRVANA strictly refuses to fabricate an observed 3D twin.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      const width = container.clientWidth || 500;
+      const height = 360;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0b1120);
+
+      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      camera.position.set(12, 10, 14);
+      camera.lookAt(0, 2, 0);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(width, height);
+      container.appendChild(renderer.domElement);
+
+      const amb = new THREE.AmbientLight(0xffffff, 0.8);
+      scene.add(amb);
+      const dir = new THREE.DirectionalLight(0x38bdf8, 1.2);
+      dir.position.set(15, 20, 15);
+      scene.add(dir);
+
+      const grid = new THREE.GridHelper(20, 20, 0x1e293b, 0x0f172a);
+      scene.add(grid);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      let prog = p.reported_progress;
+      if (state.twinMode === 'OBSERVED') prog = p.observed_progress || 0;
+      if (state.twinMode === 'EXPECTED') prog = (p.reality_gap_summary && p.reality_gap_summary.expected_progress) || 50;
+      if (state.twinMode === 'SIMULATION') prog = state.simProgress;
+
+      // Construct geometry
+      if (p.project_type === 'BUILDING') {
+        if (prog > 0) {
+          const f = new THREE.Mesh(new THREE.BoxGeometry(6, 0.8, 6), new THREE.MeshStandardMaterial({ color: 0x78716c }));
+          f.position.y = 0.4;
+          group.add(f);
+        }
+        if (prog >= 15) {
+          const colH = Math.min(3.5, ((prog - 15) / 25) * 3.5);
+          [[-2.5,-2.5],[2.5,-2.5],[-2.5,2.5],[2.5,2.5]].forEach(([x,z]) => {
+            const col = new THREE.Mesh(new THREE.BoxGeometry(0.5, colH, 0.5), new THREE.MeshStandardMaterial({ color: 0x64748b }));
+            col.position.set(x, 0.8 + colH/2, z);
+            group.add(col);
+          });
+        }
+        if (prog >= 40) {
+          const wH = Math.min(3.0, ((prog - 40) / 30) * 3.0);
+          const w = new THREE.Mesh(new THREE.BoxGeometry(5.2, wH, 5.2), new THREE.MeshStandardMaterial({ color: 0xea580c }));
+          w.position.set(0, 0.8 + wH/2, 0);
+          group.add(w);
+        }
+        if (prog >= 70) {
+          const r = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.4, 6.4), new THREE.MeshStandardMaterial({ color: 0x0284c7 }));
+          r.position.set(0, 4.4, 0);
+          group.add(r);
+        }
+      } else {
+        // Infrastructure / Road / Bridge fallback
+        const base = new THREE.Mesh(new THREE.BoxGeometry(12, 0.4, 4), new THREE.MeshStandardMaterial({ color: 0x78716c }));
+        base.position.y = 0.2;
+        group.add(base);
+        if (prog >= 40) {
+          const top = new THREE.Mesh(new THREE.BoxGeometry((prog/100)*12, 0.2, 3.6), new THREE.MeshStandardMaterial({ color: 0x1e293b }));
+          top.position.set(0, 0.5, 0);
+          group.add(top);
+        }
+      }
+
+      if (state.twinAnimFrame) cancelAnimationFrame(state.twinAnimFrame);
+      const animate = () => {
+        state.twinAnimFrame = requestAnimationFrame(animate);
+        group.rotation.y += 0.005;
+        renderer.render(scene, camera);
+      };
+      animate();
+    }
+
+    function setTwinMode(m) {
+      state.twinMode = m;
+      ['REPORTED', 'OBSERVED', 'EXPECTED', 'SIMULATION'].forEach(mode => {
+        const btn = document.getElementById('twinBtn-' + mode);
+        if (btn) {
+          if (mode === m) btn.className = 'px-2 py-1 rounded bg-sky-600 text-white font-bold text-xs';
+          else btn.className = 'px-2 py-1 rounded text-slate-400 hover:text-white text-xs';
+        }
+      });
+      const sliderWrap = document.getElementById('simSliderWrapper');
+      if (sliderWrap) {
+        if (m === 'SIMULATION') sliderWrap.classList.remove('hidden');
+        else sliderWrap.classList.add('hidden');
+      }
+      if (state.selectedProjectDetail) initDigitalTwin3D(state.selectedProjectDetail);
+    }
+
+    function updateSimProgress(val) {
+      state.simProgress = parseFloat(val);
+      document.getElementById('simValDisplay').textContent = `${val}%`;
+      if (state.selectedProjectDetail) initDigitalTwin3D(state.selectedProjectDetail);
+    }
+
+    // Render Deep Project Intelligence View
+    function renderProjectDetailView(p) {
+      const wrapper = document.getElementById('projectDetailWrapper');
+      const rg = p.reality_gap_summary;
+      const recs = p.recommendations || [];
+      const hasObs = p.observed_progress !== null && p.observed_progress !== undefined;
+
+      wrapper.innerHTML = `
+        <div class="bg-command-panel border border-command-border rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div class="flex items-center space-x-2 mb-1">
+              <span class="font-mono text-xs px-2 py-0.5 rounded bg-slate-800 text-cyan-400 font-bold border border-slate-700">${p.project_id}</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">${p.project_type}</span>
+              ${p.data_availability_status === 'SYNTHETIC' ? '<span class="text-xs px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">SYNTHETIC BENCHMARK</span>' : ''}
+              <span class="text-xs text-slate-400 font-medium">${p.district}, ${p.state}</span>
+            </div>
+            <h2 class="text-lg font-bold text-white">${p.project_name}</h2>
+            <p class="text-xs text-slate-400 mt-1">Agency: ${p.agency || 'Unspecified'} | Sector: ${p.sector || 'General'}</p>
+          </div>
+          <button onclick="window.open('/api/v1/projects/${p.project_id}/report', '_blank')" class="inline-flex items-center space-x-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow">
+            <i data-lucide="download" class="w-4 h-4 mr-1"></i>
+            <span>Export Official PDF Dossier</span>
+          </button>
+        </div>
+
+        <!-- 3D Digital Twin Card -->
+        <div class="bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+              <i data-lucide="box" class="w-4 h-4 text-cyan-400"></i>
+              3D Attribute-Driven Digital Twin
+            </h3>
+            <div class="flex items-center space-x-1 bg-command-dark p-1 rounded-lg border border-command-border">
+              <button onclick="setTwinMode('REPORTED')" id="twinBtn-REPORTED" class="px-2 py-1 rounded bg-sky-600 text-white font-bold text-xs">REPORTED</button>
+              <button onclick="setTwinMode('OBSERVED')" id="twinBtn-OBSERVED" class="px-2 py-1 rounded text-slate-400 text-xs">OBSERVED</button>
+              <button onclick="setTwinMode('EXPECTED')" id="twinBtn-EXPECTED" class="px-2 py-1 rounded text-slate-400 text-xs">EXPECTED</button>
+              <button onclick="setTwinMode('SIMULATION')" id="twinBtn-SIMULATION" class="px-2 py-1 rounded text-slate-400 text-xs">SIMULATION</button>
+            </div>
+          </div>
+
+          <div id="twinCanvasContainer" class="w-full h-[360px] bg-[#0b1120] rounded-xl border border-command-border overflow-hidden flex items-center justify-center relative"></div>
+
+          <div id="simSliderWrapper" class="hidden p-3 bg-command-dark rounded-lg border border-command-border space-y-2 text-xs">
+            <div class="flex justify-between text-slate-300">
+              <span>Interactive Progress Milestone Slider:</span>
+              <strong id="simValDisplay" class="font-mono text-cyan-400">${state.simProgress}%</strong>
+            </div>
+            <input type="range" min="0" max="100" value="${state.simProgress}" oninput="updateSimProgress(this.value)" class="w-full">
+            <div class="flex justify-between">
+              ${[0, 20, 40, 60, 80, 100].map(s => `<button onclick="updateSimProgress(${s})" class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">${s}%</button>`).join('')}
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 italic">
+            "Visualization derived from available project attributes; not a photographic reconstruction."
+          </div>
+        </div>
+
+        <!-- Reality Planes -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-command-panel border border-command-border rounded-xl p-4">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Expected Reality</span>
+            <div class="text-2xl font-bold font-mono text-white mt-1">${rg && rg.expected_progress !== null && rg.expected_progress !== undefined ? rg.expected_progress.toFixed(1) + '%' : 'DATA NOT AVAILABLE'}</div>
+            <p class="text-[11px] text-slate-400 mt-1">S-Curve algorithmic milestone from sanctioned timeline.</p>
+          </div>
+          <div class="bg-command-panel border border-command-border rounded-xl p-4">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Reported Reality</span>
+            <div class="text-2xl font-bold font-mono text-cyan-400 mt-1">${p.reported_progress.toFixed(1)}%</div>
+            <p class="text-[11px] text-slate-400 mt-1">Contractor administrative claim on record.</p>
+          </div>
+          <div class="bg-command-panel border border-command-border rounded-xl p-4">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Observed Reality</span>
+            <div class="text-2xl font-bold font-mono text-emerald-400 mt-1">${hasObs ? p.observed_progress.toFixed(1) + '%' : '<span class="text-amber-400 text-sm font-sans">DATA NOT AVAILABLE</span>'}</div>
+            <p class="text-[11px] text-slate-400 mt-1">${hasObs ? 'Ground verified via field survey photo.' : 'No verified field inspection photo on record.'}</p>
+          </div>
+        </div>
+
+        <!-- Traceable Recommendations -->
+        <div class="bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+          <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-4 h-4 text-cyan-400"></i>
+            Prescribed Field Verification Actions (Traceable Triggers)
+          </h3>
+          <div class="space-y-2">
+            ${recs.map(r => `
+              <div class="p-3 rounded-lg bg-command-dark border border-command-border flex justify-between items-center text-xs">
+                <div>
+                  <span class="font-bold px-2 py-0.5 rounded text-[10px] border ${r.priority === 'CRITICAL' ? 'bg-rose-950 text-rose-300 border-rose-800' : 'bg-amber-950 text-amber-300 border-amber-800'}">${r.priority}</span>
+                  <strong class="text-slate-200 ml-2">${r.trigger}</strong>
+                  <p class="text-slate-400 mt-0.5">${r.recommended_action}</p>
+                </div>
+                <span class="font-mono text-[10px] px-2 py-1 rounded bg-slate-800 text-cyan-400 border border-slate-700">${r.action_type}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+      setTimeout(() => initDigitalTwin3D(p), 50);
+    }
+
+    // Reality Gap List
+    function renderRealityGapList() {
+      const el = document.getElementById('realityGapList');
+      el.innerHTML = state.projects.map(p => {
+        const gap = p.reality_gap_score || 0;
+        const hasObs = p.observed_progress !== null && p.observed_progress !== undefined;
+        return `
+          <div class="bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="font-mono text-cyan-400 font-bold text-xs">${p.project_id}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${gap > 40 ? 'bg-rose-950 text-rose-300 border-rose-800' : 'bg-emerald-950 text-emerald-300 border-emerald-800'}">GAP: ${gap.toFixed(1)}</span>
+            </div>
+            <h4 class="text-sm font-bold text-white line-clamp-1">${p.project_name}</h4>
+            <div class="space-y-1.5 text-xs bg-command-dark p-3 rounded border border-command-border">
+              <div class="flex justify-between">
+                <span class="text-slate-400">Reported:</span>
+                <strong class="text-cyan-400 font-mono">${p.reported_progress.toFixed(0)}%</strong>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Observed:</span>
+                ${hasObs ? `<strong class="text-emerald-400 font-mono">${p.observed_progress.toFixed(0)}%</strong>` : '<span class="text-[10px] text-amber-400 italic">NOT AVAILABLE</span>'}
+              </div>
+            </div>
+            <button onclick="selectProject('${p.project_id}'); switchTab('projects');" class="w-full py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-semibold">Inspect Asset</button>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // Verification Cases
+    async function loadVerificationCases() {
+      try {
+        const cases = await fetch('/api/v1/verification-cases').then(r => r.json());
+        const wrapper = document.getElementById('casesTableWrapper');
+        wrapper.innerHTML = `
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-command-dark text-slate-400 uppercase tracking-wider font-semibold border-b border-command-border">
+              <tr>
+                <th class="py-2.5 px-3">Case ID</th>
+                <th class="py-2.5 px-3">Project</th>
+                <th class="py-2.5 px-3">Priority</th>
+                <th class="py-2.5 px-3">Trigger Reason</th>
+                <th class="py-2.5 px-3">Prescribed Action</th>
+                <th class="py-2.5 px-3">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-command-border/40">
+              ${cases.length === 0 ? '<tr><td colspan="6" class="py-8 text-center text-slate-500">No active cases.</td></tr>' : cases.map(c => `
+                <tr class="hover:bg-slate-800/40">
+                  <td class="py-3 px-3 font-mono font-bold text-cyan-400">${c.case_id}</td>
+                  <td class="py-3 px-3">${c.project_name}</td>
+                  <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold border ${c.priority === 'CRITICAL' ? 'bg-rose-950 text-rose-300 border-rose-800' : 'bg-slate-800 text-slate-300'}">${c.priority}</span></td>
+                  <td class="py-3 px-3">${c.trigger_reason}</td>
+                  <td class="py-3 px-3">${c.recommended_action}</td>
+                  <td class="py-3 px-3 font-mono"><span class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 text-[10px]">${c.case_status}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Model Registry
+    async function loadModelRegistry() {
+      try {
+        const models = await fetch('/api/v1/models').then(r => r.json());
+        const wrapper = document.getElementById('modelsListWrapper');
+        wrapper.innerHTML = models.map(m => `
+          <div class="bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+            <div class="flex justify-between">
+              <span class="font-mono text-cyan-400 font-bold text-xs">${m.model_id}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-950 text-emerald-300 border-emerald-800">${m.status}</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">${m.model_name} (v${m.version})</h4>
+            <p class="text-xs text-slate-400 font-mono">${m.algorithm}</p>
+            <div class="bg-command-dark p-2.5 rounded text-[10px] font-mono text-slate-300">
+              Training data version: ${m.training_data_version}<br>
+              Trained: ${m.training_timestamp ? new Date(m.training_timestamp).toLocaleString() : 'N/A'}
+            </div>
+          </div>
+        `).join('') + `
+          <div class="bg-command-panel border border-command-border rounded-xl p-5 space-y-3">
+            <div class="flex justify-between">
+              <span class="font-mono text-cyan-400 font-bold text-xs">cv_physical_progress_v1</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border bg-slate-800 text-slate-400 border-slate-700">MODEL_NOT_TRAINED</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">PhysicalProgressEstimator (Interface)</h4>
+            <p class="text-xs text-slate-400 font-mono">Architecture: YOLO / ResNet</p>
+            <div class="bg-command-dark p-2.5 rounded text-[11px] text-amber-200 bg-amber-950/40 border border-amber-800/40">
+              Awaiting mounting of domain-specific annotated construction drone/ground dataset. Fake accuracy numbers are strictly prohibited.
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Assistant Drawer
+    function toggleAssistant() {
+      const d = document.getElementById('assistantDrawer');
+      d.classList.toggle('translate-x-full');
+    }
+
+    async function handleAssistantSubmit(e) {
+      e.preventDefault();
+      const inp = document.getElementById('assistantInput');
+      const q = inp.value.trim();
+      if (!q) return;
+      inp.value = '';
+      await askPrompt(q);
+    }
+
+    async function askPrompt(text) {
+      const log = document.getElementById('assistantChatLog');
+      log.innerHTML += `
+        <div class="flex flex-col items-end">
+          <div class="bg-sky-600 text-white rounded-lg p-3 text-xs max-w-[85%]">${text}</div>
+        </div>
+      `;
+      log.scrollTop = log.scrollHeight;
+
+      try {
+        const res = await fetch('/api/v1/assistant/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: text, project_id: state.selectedProjectId })
+        }).then(r => r.json());
+
+        log.innerHTML += `
+          <div class="flex flex-col items-start">
+            <div class="bg-command-panel border border-command-border rounded-lg p-3 text-xs text-slate-200 max-w-[85%] leading-relaxed">
+              ${res.answer}
+              ${res.citations && res.citations.length ? `
+                <div class="mt-2 pt-2 border-t border-command-border/50 text-[10px] text-cyan-400 font-mono">
+                  Citations: ${res.citations.join(', ')}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        log.innerHTML += `<div class="text-xs text-rose-400 italic">Error contacting assistant.</div>`;
+      }
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Evidence Upload Modal
+    function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
+    function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
+
+    async function handleUploadSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('uploadBtn');
+      btn.disabled = true;
+      btn.textContent = 'Uploading...';
+
+      const formData = new FormData();
+      formData.append('project_id', document.getElementById('uploadProjectSelect').value);
+      formData.append('source', document.getElementById('uploadSource').value);
+      const obs = document.getElementById('uploadObsProgress').value;
+      if (obs) formData.append('observed_progress', obs);
+      formData.append('file', document.getElementById('uploadFile').files[0]);
+
+      try {
+        const res = await fetch('/api/v1/evidence/upload', {
+          method: 'POST',
+          body: formData
+        }).then(r => r.json());
+
+        alert(`Evidence Uploaded Successfully!\nSHA-256: ${res.file_hash}`);
+        closeUploadModal();
+        initApp();
+      } catch (err) {
+        alert('Upload failed: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Upload Evidence';
+      }
+    }
+
+    // Boot
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
