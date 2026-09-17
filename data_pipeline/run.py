@@ -48,7 +48,7 @@ def run_pipeline():
                 source_name="Official MoSPI MPLADS Records (ODbL)",
                 verification_status="PUBLIC_VERIFIED",
                 is_synthetic=False,
-                max_rows=150
+                stratified=True
             )
             gov_raw = gov_src.fetch()
             logger.info(f"Fetched {len(gov_raw)} real government records. SHA-256: {gov_src.file_hash}")
@@ -61,9 +61,12 @@ def run_pipeline():
             total_ingested += gov_loaded
             logger.info(f"Successfully loaded {gov_loaded} real government projects into relational database.")
 
-        # Seed financial transactions and events if needed
+        # Seed financial transactions and events with set lookups
+        existing_fin_pids = set(r[0] for r in db.query(ProjectFinancial.project_id).distinct())
+        existing_evt_pids = set(r[0] for r in db.query(ProjectEvent.project_id).distinct())
+
         for p in db.query(Project).all():
-            if not p.financials and p.sanction_amount > 0:
+            if p.project_id not in existing_fin_pids and p.sanction_amount > 0:
                 if p.start_date:
                     f1 = ProjectFinancial(
                         project_id=p.project_id,
@@ -92,7 +95,7 @@ def run_pipeline():
                     )
                     db.add(f3)
             
-            if not p.events and p.start_date:
+            if p.project_id not in existing_evt_pids and p.start_date:
                 ev = ProjectEvent(
                     project_id=p.project_id,
                     event_date=p.start_date,

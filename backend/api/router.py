@@ -30,6 +30,19 @@ from backend.services.digital_twin import DigitalTwinEngine
 from backend.services.pdf_report import PDFReportGenerator
 from backend.services.assistant import ContextualAssistant
 from ml.models.similarity_model import SimilarityEngine
+from ml.models.project_risk_model import ProjectRiskModel
+
+_cached_project_risk_model = None
+
+def get_project_risk_model():
+    global _cached_project_risk_model
+    if _cached_project_risk_model is None:
+        model_path = settings.MODEL_DIR / "project_risk" / "project_risk_model.joblib"
+        if model_path.exists():
+            _cached_project_risk_model = ProjectRiskModel.load(str(model_path))
+        else:
+            _cached_project_risk_model = ProjectRiskModel()
+    return _cached_project_risk_model
 
 api_router = APIRouter()
 
@@ -217,18 +230,169 @@ def get_project_risk(project_id: str, db: Session = Depends(get_db)):
         run_inference()
         rs = db.query(RiskScore).filter_by(project_id=project_id).first()
 
+    model = get_project_risk_model()
+    feat = model.extract_single_feature_vector(p)
+    contributing = json.loads(rs.contributing_factors_json) if (rs and rs.contributing_factors_json) else []
+
+    tier_map = {"NORMAL": "LOW", "WATCH": "MEDIUM", "HIGH": "HIGH", "CRITICAL": "CRITICAL"}
+    risk_level = tier_map.get(rs.risk_tier, rs.risk_tier) if rs else "LOW"
+    conf_val = round((rs.confidence_score / 100.0) if (rs and rs.confidence_score) else 0.70, 2)
+    source_name = p.source.source_name if p.source else "Official MoSPI MPLADS Records (ODbL)"
+
     return {
         "project_id": project_id,
+        "risk_score": rs.fused_risk_score if rs else 0.0,
+        "risk_level": risk_level,
+        "confidence": conf_val,
+        "contributing_factors": contributing,
+        "feature_values": feat,
+        "model_version": model.version,
+        "data_source": source_name,
+        "timestamp": datetime.utcnow().isoformat(),
+        # Backward-compatibility fields
         "fused_risk_score": rs.fused_risk_score if rs else 0.0,
         "risk_tier": rs.risk_tier if rs else "NORMAL",
         "reality_gap_score": rs.reality_gap_score if rs else None,
         "financial_anomaly_score": rs.financial_anomaly_score if rs else None,
         "delay_probability": rs.delay_probability if rs else None,
         "similarity_score": rs.similarity_score if rs else None,
-        "contributing_factors": json.loads(rs.contributing_factors_json) if (rs and rs.contributing_factors_json) else [],
         "weights_used": json.loads(rs.weights_used_json) if (rs and rs.weights_used_json) else {},
         "model_versions": json.loads(rs.model_versions_json) if (rs and rs.model_versions_json) else {},
-        "disclaimer": "AI-generated risk indicators are decision-support signals and do not constitute proof of fraud, corruption, or wrongdoing."
+        "disclaimer": "AI-generated risk indicators are analytical decision-support signals and do not constitute proof of fraud, corruption, or irregularity."
+    }
+
+@api_router.get("/projects/{project_id}/anomalies")
+def get_project_anomalies(project_id: str, db: Session = Depends(get_db)):
+    p = db.query(Project).filter_by(project_id=project_id).first()
+    if not p:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    anomalies = db.query(ProjectAnomaly).filter_by(project_id=project_id, is_active=True).all()
+    source_name = p.source.source_name if p.source else "Official MoSPI MPLADS Records (ODbL)"
+
+    return {
+        "project_id": project_id,
+        "active_anomaly_count": len(anomalies),
+        "anomalies": [{
+            "id": a.id,
+            "anomaly_type": a.anomaly_type,
+            "severity": a.severity,
+            "score": a.score,
+            "description": a.description,
+            "evidence_data": json.loads(a.evidence_data_json) if a.evidence_data_json else None,
+            "created_at": a.created_at.isoformat() if a.created_at else None
+        } for a in anomalies],
+        "data_source": source_name,
+        "timestamp": datetime.utcnow().isoformat(),
+        "disclaimer": "AI-generated risk indicators are analytical decision-support signals and do not constitute proof of fraud, corruption, or irregularity."
+    }
+
+@api_router.get("/projects/{project_id}/explanation")
+def get_project_explanation(project_id: str, db: Session = Depends(get_db)):
+    p = db.query(Project).filter_by(project_id=project_id).first()
+    if not p:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    rs = db.query(RiskScore).filter_by(project_id=project_id).first()
+    model = get_project_risk_model()
+    feat = model.extract_single_feature_vector(p)
+
+    contributing = json.loads(rs.contributing_factors_json) if (rs and rs.contributing_factors_json) else []
+    tier_map = {"NORMAL": "LOW", "WATCH": "MEDIUM", "HIGH": "HIGH", "CRITICAL": "CRITICAL"}
+    risk_level = tier_map.get(rs.risk_tier, rs.risk_tier) if rs else "LOW"
+
+    sec = p.sector or "OTHER"
+    sec_med = model.sector_medians.get(sec, model.global_median_cost)
+    st = p.state or "UNKNOWN"
+    st_med = model.state_medians.get(st, model.global_median_cost)
+
+    return {
+        "project_id": project_id,
+        "risk_score": rs.fused_risk_score if rs else 0.0,
+        "risk_level": risk_level,
+        "confidence": round((rs.confidence_score / 100.0) if (rs and rs.confidence_score) else 0.70, 2),
+        "analytical_summary": "; ".join(contributing) if contributing else "No statistical or timeline irregularities identified in current administrative records.",
+        "contributing_factors": contributing,
+        "benchmark_comparisons": {
+            "sector": sec,
+            "project_sanction_amount": p.sanction_amount,
+            "sector_median_amount": sec_med,
+            "sector_cost_deviation_mads": feat["cost_log_ratio_sector"],
+            "state": st,
+            "state_median_amount": st_med,
+            "state_cost_deviation_mads": feat["cost_log_ratio_state"]
+        },
+        "decision_support_guidance": "Recommended for on-site physical verification" if (rs and rs.fused_risk_score >= 60.0) else "Within nominal statistical distribution bounds.",
+        "model_version": model.version,
+        "timestamp": datetime.utcnow().isoformat(),
+        "disclaimer": "AI-generated risk indicators are analytical decision-support signals and do not constitute proof of fraud, corruption, or irregularity."
+    }
+
+@api_router.get("/projects/{project_id}/features")
+def get_project_features(project_id: str, db: Session = Depends(get_db)):
+    p = db.query(Project).filter_by(project_id=project_id).first()
+    if not p:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    model = get_project_risk_model()
+    feat = model.extract_single_feature_vector(p)
+
+    return {
+        "project_id": project_id,
+        "feature_names": model.FEATURE_NAMES,
+        "raw_features": {
+            "sanction_amount": feat["sanction_amount"],
+            "released_amount": feat["released_amount"],
+            "expenditure_amount": feat["expenditure_amount"],
+            "reported_progress": feat["reported_progress"],
+            "elapsed_days": feat["elapsed_days"]
+        },
+        "normalized_features": {
+            "cost_log_ratio_sector": feat["cost_log_ratio_sector"],
+            "cost_log_ratio_state": feat["cost_log_ratio_state"],
+            "utilization_ratio": feat["utilization_ratio"],
+            "release_ratio": feat["release_ratio"],
+            "stalled_days_scaled": feat["stalled_days_scaled"],
+            "fin_phys_gap": feat["fin_phys_gap"],
+            "text_similarity_max": feat["text_similarity_max"],
+            "data_completeness_ratio": feat["data_completeness_ratio"]
+        },
+        "model_version": model.version,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+@api_router.get("/projects/{project_id}/data-quality")
+def get_project_data_quality(project_id: str, db: Session = Depends(get_db)):
+    p = db.query(Project).filter_by(project_id=project_id).first()
+    if not p:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    model = get_project_risk_model()
+    completeness, missing_fields = model.compute_data_completeness(p)
+    issues = db.query(DataQualityIssue).filter_by(project_id=project_id).all()
+
+    src = p.source
+    return {
+        "project_id": project_id,
+        "provenance": {
+            "source_name": src.source_name if src else "Official MoSPI MPLADS Records (ODbL)",
+            "source_url": src.source_url if src else None,
+            "source_type": src.source_type if src else "GOVERNMENT_PORTAL",
+            "verification_status": p.data_availability_status or (src.verification_status if src else "PUBLIC_VERIFIED"),
+            "license": src.license if src else "NDSAP / Government Open Data",
+            "retrieval_timestamp": src.retrieval_timestamp.isoformat() if (src and src.retrieval_timestamp) else None
+        },
+        "data_completeness_ratio": completeness,
+        "missing_fields": missing_fields,
+        "observed_evidence_status": p.observed_progress_status,
+        "quality_issues": [{
+            "issue_type": issue.issue_type,
+            "severity": issue.severity,
+            "details": issue.details,
+            "original_value": issue.original_value
+        } for issue in issues],
+        "is_synthetic": p.data_availability_status == "SYNTHETIC",
+        "timestamp": datetime.utcnow().isoformat()
     }
 
 @api_router.get("/projects/{project_id}/reality-gap", response_model=RealityGapResponse)

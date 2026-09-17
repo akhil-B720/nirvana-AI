@@ -128,3 +128,53 @@ eality_gap_score and categorizes into NORMAL, WATCH, HIGH, CRITICAL.
   - 	est_security.py: Password hashing, JWT creation & expiration, login success & failure, MIME file validation (6 tests).
 - **Execution Results:**
   - Total: **25 passed, 0 failed** in 3.84 seconds.
+
+
+---
+
+## 8. Macro MPLADS Intelligence System
+- **Macro Data Pipeline (`data_pipeline/processors/macro_pipeline.py`):**
+  - Ingested 3 authentic MoSPI datasets covering 37 States/UTs over 7 fiscal years (2014-2021): state yearly expenditures, sector distributions, and unspent balances.
+  - Validated and persisted 258 macro records in `backend/models/macro_models.py`.
+- **Macro Risk & Clustering Analyzer (`ml/models/macro_risk_analyzer.py`):**
+  - Unsupervised Isolation Forest anomaly detection combined with KMeans state clustering ($k=3$, Silhouette: 0.2226, PCA 2D: 64.0% variance).
+  - Model artifact persisted at `models/macro_risk/macro_risk_model.joblib`.
+- **Macro Endpoints (`backend/api/macro_router.py`):**
+  - `/api/v1/macro/states`, `/api/v1/macro/states/{name}`, `/api/v1/macro/risk-analysis`, `/api/v1/macro/audit-logs`.
+- **Test Suite (`tests/test_macro_pipeline.py`):**
+  - 7 automated tests covering ingestion, clustering, PCA, state lookups, and API endpoints (100% pass rate).
+
+---
+
+## 9. Project-Level MPLADS Risk Intelligence System
+- **Authentic Stratified Ingestion (`data_pipeline/run.py` & `data_pipeline/sources/csv_source.py`):**
+  - Ingested 3,232 authentic MoSPI government works from `dataset/raw/real_mplads_works.csv` across all States/UTs.
+  - Stratified across all 1,503 Completed, 629 Ongoing, 1,000 Sanctioned, and 100 Unsanctioned works.
+  - Tagged with `PUBLIC_VERIFIED` provenance and tracked in `data_sources` table. Total active database projects: 3,240.
+  - Initialized relational financial ledgers (`ProjectFinancial`) and chronological event timelines (`ProjectEvent`).
+- **Project-Level ML Anomaly Model (`ml/models/project_risk_model.py`):**
+  - Built `ProjectRiskModel` with 8-dimensional normalized feature matrix:
+    1. `cost_log_ratio_sector`: Log-cost deviation relative to sector median.
+    2. `cost_log_ratio_state`: Log-cost deviation relative to state median.
+    3. `utilization_ratio`: Fund expenditure relative to releases.
+    4. `release_ratio`: Fund release relative to sanctioned budget.
+    5. `stalled_days_scaled`: Elapsed days since recommendation for stalled low-progress projects.
+    6. `fin_phys_gap`: Financial vs reported progress misalignment percentage.
+    7. `text_similarity_max`: TF-IDF duplicate similarity within administrative jurisdiction.
+    8. `data_completeness_ratio`: Proportion of non-null administrative fields.
+  - Unsupervised `IsolationForest` (150 trees, 10% contamination) trained on 3,390 projects (global median sanction: ₹400,000).
+  - Dynamic `risk_score` (0-100), `risk_level` (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`), `confidence` (0.0-1.0), and plain-English `contributing_factors`.
+  - Serialized model artifact to `models/project_risk/project_risk_model.joblib` and registered in `model_versions` table.
+- **Batch Inference & Anomaly Persistence (`ml/inference.py`):**
+  - Executed inference across all active projects, generating calibrated risk scores and persisting 1,578 active analytical anomalies in `project_anomalies` table.
+- **Dedicated Project REST Endpoints (`backend/api/router.py`):**
+  - `GET /api/v1/projects/{id}/risk`: Full standardized payload with risk score, tier, confidence, factors, features, version, source, timestamp.
+  - `GET /api/v1/projects/{id}/anomalies`: Active anomaly breakdown and severity tags.
+  - `GET /api/v1/projects/{id}/explanation`: Plain-English summary and sector/state median benchmarks.
+  - `GET /api/v1/projects/{id}/features`: Raw and normalized feature vectors.
+  - `GET /api/v1/projects/{id}/data-quality`: Provenance, field completeness ratio, missing field tags, quality issues.
+- **Frontend Dashboard Integration (`backend/static/index.html`):**
+  - Integrated Project-Level Risk Intelligence card displaying real-time empirical risk score, confidence gauge, data completeness, and contributing factor bullet points.
+- **Automated Tests (`tests/test_project_risk.py`):**
+  - 8 new tests verifying feature extraction, bounds, prediction consistency, all 5 endpoints, and 404 responses.
+  - **Full Test Suite Status:** **41 passed, 0 failed** across all 8 test files.

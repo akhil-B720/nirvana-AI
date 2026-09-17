@@ -10,7 +10,7 @@ from data_pipeline.normalizers.normalizer import DataNormalizer
 from backend.models.models import Project, DataQualityIssue, ProjectLocation
 
 class CSVDataSource(BaseDataSource):
-    def __init__(self, file_path: str, source_name: Optional[str] = None, verification_status: str = "PUBLIC_VERIFIED", is_synthetic: bool = False, max_rows: Optional[int] = None):
+    def __init__(self, file_path: str, source_name: Optional[str] = None, verification_status: str = "PUBLIC_VERIFIED", is_synthetic: bool = False, max_rows: Optional[int] = None, stratified: bool = False):
         p = Path(file_path)
         name = source_name or f"CSV Import: {p.name}"
         source_type = "SYNTHETIC" if is_synthetic else "GOVERNMENT_PORTAL"
@@ -20,6 +20,7 @@ class CSVDataSource(BaseDataSource):
         self.verification_status = v_status
         self.is_synthetic = is_synthetic
         self.max_rows = max_rows
+        self.stratified = stratified
         self.access_method = "CSV_INGEST"
         self.quality_score: float = 100.0
 
@@ -31,24 +32,39 @@ class CSVDataSource(BaseDataSource):
         self.compute_sha256(raw_bytes)
 
         # Handle delimiters and encodings gracefully
-        for sep in [",", ";", "\t"]:
+        df = None
+        for sep in [";", ",", "\t"]:
             try:
-                df = pd.read_csv(self.file_path, sep=sep, nrows=self.max_rows, encoding="utf-8")
-                if len(df.columns) > 1:
-                    self.raw_data = df
-                    return self.raw_data
+                candidate = pd.read_csv(self.file_path, sep=sep, nrows=None if self.stratified else self.max_rows, encoding="utf-8", low_memory=False)
+                if len(candidate.columns) > 1:
+                    df = candidate
+                    break
             except UnicodeDecodeError:
                 try:
-                    df = pd.read_csv(self.file_path, sep=sep, nrows=self.max_rows, encoding="latin-1")
-                    if len(df.columns) > 1:
-                        self.raw_data = df
-                        return self.raw_data
+                    candidate = pd.read_csv(self.file_path, sep=sep, nrows=None if self.stratified else self.max_rows, encoding="latin-1", low_memory=False)
+                    if len(candidate.columns) > 1:
+                        df = candidate
+                        break
                 except Exception:
                     pass
             except Exception:
                 continue
 
-        self.raw_data = pd.read_csv(self.file_path, nrows=self.max_rows)
+        if df is None:
+            df = pd.read_csv(self.file_path, nrows=self.max_rows)
+
+        if self.stratified and "STATUS" in df.columns:
+            completed = df[df["STATUS"] == "Completed"]
+            ongoing = df[df["STATUS"] == "Ongoing"]
+            sanctioned = df[df["STATUS"] == "Sanctioned"]
+            if len(sanctioned) > 1000:
+                sanctioned = sanctioned.sample(n=1000, random_state=42)
+            unsanctioned = df[df["STATUS"] == "Unsanctioned"]
+            if len(unsanctioned) > 100:
+                unsanctioned = unsanctioned.sample(n=100, random_state=42)
+            df = pd.concat([completed, ongoing, sanctioned, unsanctioned])
+
+        self.raw_data = df
         return self.raw_data
 
     def validate(self, df: pd.DataFrame) -> List[Dict[str, Any]]:
@@ -78,14 +94,15 @@ class CSVDataSource(BaseDataSource):
             )
             db_session.add(dqi)
 
-        # 3. Ingest projects
+        # 3. Ingest projects with cached lookup
+        existing_projects = {p.project_id: p for p in db_session.query(Project).all()}
         loaded_count = 0
         for _, row in self.normalized_data.iterrows():
             p_id = str(row.get("project_id", "")).strip()
             if not p_id or p_id.lower() in ("nan", "none", "null"):
                 continue
 
-            existing = db_session.query(Project).filter_by(project_id=p_id).first()
+            existing = existing_projects.get(p_id)
             if existing:
                 # Update existing
                 existing.project_name = str(row.get("project_name", existing.project_name))
