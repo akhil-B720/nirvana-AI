@@ -10,15 +10,16 @@ from data_pipeline.normalizers.normalizer import DataNormalizer
 from backend.models.models import Project, DataQualityIssue, ProjectLocation
 
 class CSVDataSource(BaseDataSource):
-    def __init__(self, file_path: str, source_name: Optional[str] = None, verification_status: str = "PUBLIC_VERIFIED", is_synthetic: bool = False):
+    def __init__(self, file_path: str, source_name: Optional[str] = None, verification_status: str = "PUBLIC_VERIFIED", is_synthetic: bool = False, max_rows: Optional[int] = None):
         p = Path(file_path)
         name = source_name or f"CSV Import: {p.name}"
-        source_type = "SYNTHETIC" if is_synthetic else "OPEN_DATA_CSV"
+        source_type = "SYNTHETIC" if is_synthetic else "GOVERNMENT_PORTAL"
         v_status = "SYNTHETIC" if is_synthetic else verification_status
         super().__init__(source_name=name, source_type=source_type, source_url=f"file://{p.resolve()}")
         self.file_path = p
         self.verification_status = v_status
         self.is_synthetic = is_synthetic
+        self.max_rows = max_rows
         self.access_method = "CSV_INGEST"
         self.quality_score: float = 100.0
 
@@ -29,16 +30,30 @@ class CSVDataSource(BaseDataSource):
         raw_bytes = self.file_path.read_bytes()
         self.compute_sha256(raw_bytes)
 
-        # Handle encodings gracefully
-        try:
-            self.raw_data = pd.read_csv(self.file_path, encoding="utf-8")
-        except UnicodeDecodeError:
-            self.raw_data = pd.read_csv(self.file_path, encoding="latin-1")
+        # Handle delimiters and encodings gracefully
+        for sep in [",", ";", "\t"]:
+            try:
+                df = pd.read_csv(self.file_path, sep=sep, nrows=self.max_rows, encoding="utf-8")
+                if len(df.columns) > 1:
+                    self.raw_data = df
+                    return self.raw_data
+            except UnicodeDecodeError:
+                try:
+                    df = pd.read_csv(self.file_path, sep=sep, nrows=self.max_rows, encoding="latin-1")
+                    if len(df.columns) > 1:
+                        self.raw_data = df
+                        return self.raw_data
+                except Exception:
+                    pass
+            except Exception:
+                continue
 
+        self.raw_data = pd.read_csv(self.file_path, nrows=self.max_rows)
         return self.raw_data
 
     def validate(self, df: pd.DataFrame) -> List[Dict[str, Any]]:
-        self.quality_issues, self.quality_score = DataQualityEngine.validate_dataset(df)
+        target_df = DataNormalizer.normalize_dataframe(df) if "WORK" in df.columns else df
+        self.quality_issues, self.quality_score = DataQualityEngine.validate_dataset(target_df)
         return self.quality_issues
 
     def normalize(self, df: pd.DataFrame) -> pd.DataFrame:

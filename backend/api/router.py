@@ -139,6 +139,7 @@ def list_projects(
     project_type: Optional[str] = None,
     risk_tier: Optional[str] = None,
     status_filter: Optional[str] = Query(None, alias="status"),
+    data_status: Optional[str] = Query(None, alias="data_status"),
     search: Optional[str] = None,
     skip: int = 0,
     limit: int = 100,
@@ -153,6 +154,8 @@ def list_projects(
         query = query.filter(Project.project_type == project_type)
     if status_filter:
         query = query.filter(Project.status == status_filter)
+    if data_status:
+        query = query.filter(Project.data_availability_status == data_status)
     if search:
         query = query.filter(Project.project_name.ilike(f"%{search}%") | Project.project_id.ilike(f"%{search}%"))
 
