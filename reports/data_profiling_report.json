@@ -1,0 +1,479 @@
+{
+  "mplads_state_yearly_expenditure_and_works.csv": {
+    "rows": 38,
+    "cols": 10,
+    "columns": [
+      "S.No",
+      "State",
+      "2016-17 - Expenditure - Incurred With (Rs. Crore)",
+      "2016-17 - Completed - Works",
+      "2016-17 - Expenditure - Incurred With (Rs. Crore).1",
+      "2016-17 - Completed - Works.1",
+      "2018-19 - Expenditure - Incurred With (Rs. Crore)",
+      "2018-19 - Completed - Works",
+      "2019-20 - Expenditure - Incurred With (Rs. Crore)",
+      "2019-20 - Completed - Works"
+    ],
+    "duplicates": 0,
+    "columns_profile": {
+      "S.No": {
+        "dtype": "object",
+        "unique_count": 38,
+        "null_count": 0,
+        "sample_values": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "top_values": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1
+        }
+      },
+      "State": {
+        "dtype": "object",
+        "unique_count": 38,
+        "null_count": 0,
+        "sample_values": [
+          "A & N Islands",
+          "Andhra Pradesh",
+          "Arunachal Pradesh",
+          "Assam",
+          "Bihar"
+        ],
+        "top_values": {
+          "A & N Islands": 1,
+          "Andhra Pradesh": 1,
+          "Arunachal Pradesh": 1,
+          "Assam": 1,
+          "Bihar": 1
+        }
+      },
+      "2016-17 - Expenditure - Incurred With (Rs. Crore)": {
+        "dtype": "float64",
+        "unique_count": 38,
+        "null_count": 0,
+        "min": 0.0,
+        "max": 3906.37,
+        "mean": 205.59842105263158,
+        "median": 56.695,
+        "std": 627.902017844867
+      },
+      "2016-17 - Completed - Works": {
+        "dtype": "int64",
+        "unique_count": 37,
+        "null_count": 0,
+        "min": 0.0,
+        "max": 92290.0,
+        "mean": 4857.368421052632,
+        "median": 1518.0,
+        "std": 14867.71289127397
+      },
+      "2016-17 - Expenditure - Incurred With (Rs. Crore).1": {
+        "dtype": "float64",
+        "unique_count": 38,
+        "null_count": 0,
+        "min": 0.0,
+        "max": 4080.68,
+        "mean": 214.7726315789474,
+        "median": 72.57,
+        "std": 655.9042271126472
+      },
+      "2016-17 - Completed - Works.1": {
+        "dtype": "int64",
+        "unique_count": 38,
+        "null_count": 0,
+        "min": 0.0,
+        "max": 94373.0,
+        "mean": 4967.0,
+        "median": 1617.5,
+        "std": 15263.922922138101
+      },
+      "2018-19 - Expenditure - Incurred With (Rs. Crore)": {
+        "dtype": "float64",
+        "unique_count": 37,
+        "null_count": 0,
+        "min": 3.81,
+        "max": 5012.13,
+        "mean": 263.7963157894737,
+        "median": 92.625,
+        "std": 810.5827387030623
+      },
+      "2018-19 - Completed - Works": {
+        "dtype": "int64",
+        "unique_count": 38,
+        "null_count": 0,
+        "min": 2.0,
+        "max": 105167.0,
+        "mean": 5535.105263157895,
+        "median": 1800.0,
+        "std": 17104.61876581163
+      },
+      "2019-20 - Expenditure - Incurred With (Rs. Crore)": {
+        "dtype": "float64",
+        "unique_count": 38,
+        "null_count": 0,
+        "min": 0.0,
+        "max": 2236.28,
+        "mean": 117.69894736842105,
+        "median": 33.285,
+        "std": 359.719602106144
+      },
+      "2019-20 - Completed - Works": {
+        "dtype": "int64",
+        "unique_count": 36,
+        "null_count": 0,
+        "min": 0.0,
+        "max": 56946.0,
+        "mean": 2997.157894736842,
+        "median": 1076.5,
+        "std": 9186.177170152037
+      }
+    },
+    "sample_head": [
+      {
+        "S.No": "1",
+        "State": "A & N Islands",
+        "2016-17 - Expenditure - Incurred With (Rs. Crore)": 4.74,
+        "2016-17 - Completed - Works": 11,
+        "2016-17 - Expenditure - Incurred With (Rs. Crore).1": 4.77,
+        "2016-17 - Completed - Works.1": 19,
+        "2018-19 - Expenditure - Incurred With (Rs. Crore)": 13.56,
+        "2018-19 - Completed - Works": 27,
+        "2019-20 - Expenditure - Incurred With (Rs. Crore)": 1.29,
+        "2019-20 - Completed - Works": 0
+      },
+      {
+        "S.No": "2",
+        "State": "Andhra Pradesh",
+        "2016-17 - Expenditure - Incurred With (Rs. Crore)": 172.8,
+        "2016-17 - Completed - Works": 5206,
+        "2016-17 - Expenditure - Incurred With (Rs. Crore).1": 184.04,
+        "2016-17 - Completed - Works.1": 4780,
+        "2018-19 - Expenditure - Incurred With (Rs. Crore)": 202.26,
+        "2018-19 - Completed - Works": 3888,
+        "2019-20 - Expenditure - Incurred With (Rs. Crore)": 116.04,
+        "2019-20 - Completed - Works": 3542
+      },
+      {
+        "S.No": "3",
+        "State": "Arunachal Pradesh",
+        "2016-17 - Expenditure - Incurred With (Rs. Crore)": 15.47,
+        "2016-17 - Completed - Works": 314,
+        "2016-17 - Expenditure - Incurred With (Rs. Crore).1": 14.31,
+        "2016-17 - Completed - Works.1": 215,
+        "2018-19 - Expenditure - Incurred With (Rs. Crore)": 18.14,
+        "2018-19 - Completed - Works": 377,
+        "2019-20 - Expenditure - Incurred With (Rs. Crore)": 3.33,
+        "2019-20 - Completed - Works": 63
+      }
+    ],
+    "sample_tail": [
+      {
+        "S.No": "36",
+        "State": "Uttarakhand",
+        "2016-17 - Expenditure - Incurred With (Rs. Crore)": 39.21,
+        "2016-17 - Completed - Works": 1741,
+        "2016-17 - Expenditure - Incurred With (Rs. Crore).1": 35.88,
+        "2016-17 - Completed - Works.1": 1381,
+        "2018-19 - Expenditure - Incurred With (Rs. Crore)": 37.26,
+        "2018-19 - Completed - Works": 1151,
+        "2019-20 - Expenditure - Incurred With (Rs. Crore)": 31.08,
+        "2019-20 - Completed - Works": 1460
+      },
+      {
+        "S.No": "37",
+        "State": "West Bengal",
+        "2016-17 - Expenditure - Incurred With (Rs. Crore)": 304.34,
+        "2016-17 - Completed - Works": 4704,
+        "2016-17 - Expenditure - Incurred With (Rs. Crore).1": 338.39,
+        "2016-17 - Completed - Works.1": 4752,
+        "2018-19 - Expenditure - Incurred With (Rs. Crore)": 347.82,
+        "2018-19 - Completed - Works": 5151,
+        "2019-20 - Expenditure - Incurred With (Rs. Crore)": 123.1,
+        "2019-20 - Completed - Works": 2613
+      },
+      {
+        "S.No": "Total",
+        "State": "Total",
+        "2016-17 - Expenditure - Incurred With (Rs. Crore)": 3906.37,
+        "2016-17 - Completed - Works": 92290,
+        "2016-17 - Expenditure - Incurred With (Rs. Crore).1": 4080.68,
+        "2016-17 - Completed - Works.1": 94373,
+        "2018-19 - Expenditure - Incurred With (Rs. Crore)": 5012.13,
+        "2018-19 - Completed - Works": 105167,
+        "2019-20 - Expenditure - Incurred With (Rs. Crore)": 2236.28,
+        "2019-20 - Completed - Works": 56946
+      }
+    ]
+  },
+  "mplads_state_sector_distribution.csv": {
+    "rows": 36,
+    "cols": 8,
+    "columns": [
+      "Sr. No.",
+      "State/ UT Name",
+      "Railways, Roads, Pathways & Bridges",
+      "Education",
+      "Drinking Water Facility",
+      "Sanitation & Public Health",
+      "Other Public Facilities",
+      "Others"
+    ],
+    "duplicates": 0,
+    "columns_profile": {
+      "Sr. No.": {
+        "dtype": "int64",
+        "unique_count": 36,
+        "null_count": 0,
+        "min": 1.0,
+        "max": 36.0,
+        "mean": 18.5,
+        "median": 18.5,
+        "std": 10.535653752852738
+      },
+      "State/ UT Name": {
+        "dtype": "object",
+        "unique_count": 36,
+        "null_count": 0,
+        "sample_values": [
+          "Andhra Pradesh (Old)",
+          "Arunachal Pradesh",
+          "Assam",
+          "Bihar",
+          "Chhattisgarh"
+        ],
+        "top_values": {
+          "Andhra Pradesh (Old)": 1,
+          "Arunachal Pradesh": 1,
+          "Assam": 1,
+          "Bihar": 1,
+          "Chhattisgarh": 1
+        }
+      },
+      "Railways, Roads, Pathways & Bridges": {
+        "dtype": "float64",
+        "unique_count": 34,
+        "null_count": 2,
+        "min": 0.0,
+        "max": 67.29,
+        "mean": 30.111470588235292,
+        "median": 28.875,
+        "std": 16.278686964463304
+      },
+      "Education": {
+        "dtype": "float64",
+        "unique_count": 34,
+        "null_count": 2,
+        "min": 2.29,
+        "max": 99.95,
+        "mean": 16.759411764705884,
+        "median": 12.495000000000001,
+        "std": 17.17987793041906
+      },
+      "Drinking Water Facility": {
+        "dtype": "float64",
+        "unique_count": 34,
+        "null_count": 2,
+        "min": 0.0,
+        "max": 43.18,
+        "mean": 5.868235294117646,
+        "median": 4.460000000000001,
+        "std": 7.617511512293809
+      },
+      "Sanitation & Public Health": {
+        "dtype": "float64",
+        "unique_count": 32,
+        "null_count": 2,
+        "min": 0.0,
+        "max": 14.7,
+        "mean": 3.848235294117647,
+        "median": 2.54,
+        "std": 3.8285241009354833
+      },
+      "Other Public Facilities": {
+        "dtype": "float64",
+        "unique_count": 34,
+        "null_count": 2,
+        "min": 0.0,
+        "max": 66.24,
+        "mean": 31.184117647058823,
+        "median": 30.77,
+        "std": 14.770431995005191
+      },
+      "Others": {
+        "dtype": "float64",
+        "unique_count": 34,
+        "null_count": 2,
+        "min": 0.05,
+        "max": 34.69,
+        "mean": 12.227352941176472,
+        "median": 10.065,
+        "std": 7.036329237918379
+      }
+    },
+    "sample_head": [
+      {
+        "Sr. No.": 1,
+        "State/ UT Name": "Andhra Pradesh (Old)",
+        "Railways, Roads, Pathways & Bridges": 34.94,
+        "Education": 7.2,
+        "Drinking Water Facility": 12.11,
+        "Sanitation & Public Health": 2.82,
+        "Other Public Facilities": 31.98,
+        "Others": 10.94
+      },
+      {
+        "Sr. No.": 2,
+        "State/ UT Name": "Arunachal Pradesh",
+        "Railways, Roads, Pathways & Bridges": 14.49,
+        "Education": 12.44,
+        "Drinking Water Facility": 2.2,
+        "Sanitation & Public Health": 2.71,
+        "Other Public Facilities": 37.43,
+        "Others": 30.73
+      },
+      {
+        "Sr. No.": 3,
+        "State/ UT Name": "Assam",
+        "Railways, Roads, Pathways & Bridges": 25.2,
+        "Education": 20.03,
+        "Drinking Water Facility": 4.9,
+        "Sanitation & Public Health": 1.1,
+        "Other Public Facilities": 41.42,
+        "Others": 7.35
+      }
+    ],
+    "sample_tail": [
+      {
+        "Sr. No.": 34,
+        "State/ UT Name": "Delhi",
+        "Railways, Roads, Pathways & Bridges": 41.33,
+        "Education": 3.23,
+        "Drinking Water Facility": 1.3,
+        "Sanitation & Public Health": 2.43,
+        "Other Public Facilities": 28.73,
+        "Others": 22.99
+      },
+      {
+        "Sr. No.": 35,
+        "State/ UT Name": "Lakshadweep",
+        "Railways, Roads, Pathways & Bridges": 0.0,
+        "Education": 99.95,
+        "Drinking Water Facility": 0.0,
+        "Sanitation & Public Health": 0.0,
+        "Other Public Facilities": 0.0,
+        "Others": 0.05
+      },
+      {
+        "Sr. No.": 36,
+        "State/ UT Name": "Puducherry",
+        "Railways, Roads, Pathways & Bridges": 45.63,
+        "Education": 4.5,
+        "Drinking Water Facility": 1.23,
+        "Sanitation & Public Health": 12.55,
+        "Other Public Facilities": 26.95,
+        "Others": 9.13
+      }
+    ]
+  },
+  "mplads_state_unspent_balance.csv": {
+    "rows": 40,
+    "cols": 3,
+    "columns": [
+      "S.No",
+      "States/UTs",
+      "Unspent Balance (in Rs. Crore)"
+    ],
+    "duplicates": 0,
+    "columns_profile": {
+      "S.No": {
+        "dtype": "object",
+        "unique_count": 39,
+        "null_count": 0,
+        "sample_values": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "top_values": {
+          "Sub Total": 2,
+          "2": 1,
+          "1": 1,
+          "4": 1,
+          "5": 1
+        }
+      },
+      "States/UTs": {
+        "dtype": "object",
+        "unique_count": 39,
+        "null_count": 0,
+        "sample_values": [
+          "A & N Island",
+          "Andhra Pradesh",
+          "Arunachal Pradesh",
+          "Assam",
+          "Bihar"
+        ],
+        "top_values": {
+          "Sub Total": 2,
+          "Andhra Pradesh": 1,
+          "A & N Island": 1,
+          "Assam": 1,
+          "Bihar": 1
+        }
+      },
+      "Unspent Balance (in Rs. Crore)": {
+        "dtype": "float64",
+        "unique_count": 39,
+        "null_count": 0,
+        "min": 1.91,
+        "max": 4480.14,
+        "mean": 336.0105,
+        "median": 81.095,
+        "std": 962.0160933723697
+      }
+    },
+    "sample_head": [
+      {
+        "S.No": "1",
+        "States/UTs": "A & N Island",
+        "Unspent Balance (in Rs. Crore)": 4.22
+      },
+      {
+        "S.No": "2",
+        "States/UTs": "Andhra Pradesh",
+        "Unspent Balance (in Rs. Crore)": 265.91
+      },
+      {
+        "S.No": "3",
+        "States/UTs": "Arunachal Pradesh",
+        "Unspent Balance (in Rs. Crore)": 8.73
+      }
+    ],
+    "sample_tail": [
+      {
+        "S.No": "Nominated",
+        "States/UTs": "Nominated",
+        "Unspent Balance (in Rs. Crore)": 90.53
+      },
+      {
+        "S.No": "Sub Total",
+        "States/UTs": "Sub Total",
+        "Unspent Balance (in Rs. Crore)": 90.53
+      },
+      {
+        "S.No": "Grand Total",
+        "States/UTs": "Grand Total",
+        "Unspent Balance (in Rs. Crore)": 4480.14
+      }
+    ]
+  }
+}

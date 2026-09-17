@@ -5,6 +5,7 @@ from backend.core.database import engine, Base, SessionLocal
 from backend.models.models import User
 from backend.services.auth import seed_default_users
 from backend.api.router import api_router
+from backend.api.macro_router import macro_router
 
 # Initialize database schema
 Base.metadata.create_all(bind=engine)
@@ -26,8 +27,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount API router
+# Mount API routers
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+app.include_router(macro_router, prefix=settings.API_V1_PREFIX)
 
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles

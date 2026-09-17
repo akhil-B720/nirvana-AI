@@ -1,0 +1,92 @@
+{
+  "metrics": {
+    "samples_count": 37,
+    "features_count": 10,
+    "contamination": 0.15,
+    "silhouette_score": 0.2226,
+    "pca_explained_variance": [
+      0.396,
+      0.244
+    ],
+    "pca_cumulative_variance": 0.64,
+    "cluster_profiles": {
+      "0": "HIGH_VOLATILITY_EXPENDITURE",
+      "1": "HIGH_VOLUME_ABSORPTION",
+      "2": "MODERATE_BALANCED_EXECUTION",
+      "3": "HIGH_VOLATILITY_EXPENDITURE"
+    }
+  },
+  "risk_distribution": {
+    "WATCH": 15,
+    "HIGH_BACKLOG": 13,
+    "NORMAL": 7,
+    "CRITICAL_BOTTLENECK": 2
+  },
+  "top_anomalies": [
+    {
+      "state": "Lakshadweep",
+      "total_expenditure_4yr_crore": 16.75,
+      "unspent_balance_crore": 6.7,
+      "backlog_absorption_years": 1.6,
+      "anomaly_score": 100.0,
+      "risk_tier": "CRITICAL_BOTTLENECK"
+    },
+    {
+      "state": "Uttar Pradesh",
+      "total_expenditure_4yr_crore": 2145.06,
+      "unspent_balance_crore": 665.58,
+      "backlog_absorption_years": 1.24,
+      "anomaly_score": 85.43,
+      "risk_tier": "CRITICAL_BOTTLENECK"
+    },
+    {
+      "state": "Daman and Diu",
+      "total_expenditure_4yr_crore": 15.46,
+      "unspent_balance_crore": 6.0,
+      "backlog_absorption_years": 1.55,
+      "anomaly_score": 58.32,
+      "risk_tier": "HIGH_BACKLOG"
+    },
+    {
+      "state": "Bihar",
+      "total_expenditure_4yr_crore": 1351.12,
+      "unspent_balance_crore": 309.03,
+      "backlog_absorption_years": 0.91,
+      "anomaly_score": 52.76,
+      "risk_tier": "WATCH"
+    },
+    {
+      "state": "Mizoram",
+      "total_expenditure_4yr_crore": 36.76,
+      "unspent_balance_crore": 1.91,
+      "backlog_absorption_years": 0.21,
+      "anomaly_score": 39.7,
+      "risk_tier": "NORMAL"
+    },
+    {
+      "state": "Dadra and Nagar Haveli",
+      "total_expenditure_4yr_crore": 17.67,
+      "unspent_balance_crore": 8.36,
+      "backlog_absorption_years": 1.89,
+      "anomaly_score": 38.6,
+      "risk_tier": "HIGH_BACKLOG"
+    },
+    {
+      "state": "Maharashtra",
+      "total_expenditure_4yr_crore": 1247.53,
+      "unspent_balance_crore": 385.49,
+      "backlog_absorption_years": 1.24,
+      "anomaly_score": 35.44,
+      "risk_tier": "WATCH"
+    },
+    {
+      "state": "Uttarakhand",
+      "total_expenditure_4yr_crore": 143.43,
+      "unspent_balance_crore": 71.34,
+      "backlog_absorption_years": 1.99,
+      "anomaly_score": 33.86,
+      "risk_tier": "HIGH_BACKLOG"
+    }
+  ],
+  "timestamp": "2026-09-17T17:35:47.371728+00:00"
+}
