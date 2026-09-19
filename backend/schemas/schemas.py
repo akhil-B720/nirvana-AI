@@ -85,14 +85,42 @@ class ProjectBase(BaseModel):
     status: str
     agency: Optional[str] = None
     data_availability_status: str = "PUBLIC_VERIFIED"
+    data_status: Optional[str] = "PUBLIC_VERIFIED"
+    source_type: Optional[str] = "OFFICIAL_MPLADS"
+    anomaly_label: Optional[int] = 0
+    anomaly_category: Optional[str] = None
+
+class ComponentStateItem(BaseModel):
+    id: int
+    project_id: str
+    sector: str
+    component_name: str
+    weight_pct: float
+    completion_pct: float
+    detected_status: str
+    data_status: str = "SYNTHETIC"
+    source_type: Optional[str] = "SYNTHETIC_TEST_DATA"
+
+    model_config = {"from_attributes": True}
+
+class ProgressHistoryItem(BaseModel):
+    id: int
+    project_id: str
+    record_date: date
+    reported_progress: float
+    financial_expenditure: float
+    status: str
+    data_status: str = "SYNTHETIC"
+    source_type: Optional[str] = "SYNTHETIC_TEST_DATA"
+
+    model_config = {"from_attributes": True}
 
 class ProjectListItem(ProjectBase):
     fused_risk_score: Optional[float] = 0.0
     risk_tier: Optional[str] = "NORMAL"
     reality_gap_score: Optional[float] = None
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class ProjectDetail(ProjectBase):
     created_at: datetime
@@ -100,12 +128,13 @@ class ProjectDetail(ProjectBase):
     financials: List[FinancialItem] = []
     events: List[EventItem] = []
     evidence_items: List[EvidenceItem] = []
+    component_states: List[ComponentStateItem] = []
+    progress_history: List[ProgressHistoryItem] = []
     risk_summary: Optional[Dict[str, Any]] = None
     reality_gap_summary: Optional[Dict[str, Any]] = None
     recommendations: List[Dict[str, Any]] = []
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 # Reality Gap & Risk
 class RealityGapResponse(BaseModel):
@@ -146,3 +175,19 @@ class AssistantQueryResponse(BaseModel):
     answer: str
     citations: List[str]
     disclaimer: str
+
+# Field Inspection Requests & Superior Approval
+class InspectionRequestCreate(BaseModel):
+    project_id: str
+    inspector_name: str
+    proposed_date: Optional[str] = None
+    priority: str = "HIGH"
+    reason_for_inspection: Optional[str] = None
+    evidence_available: Optional[str] = None
+    evidence_missing: Optional[str] = None
+    approving_officer: Optional[str] = None
+
+class InspectionStatusUpdate(BaseModel):
+    approval_status: str  # DRAFT, SUBMITTED, UNDER_REVIEW, APPROVED, REJECTED, COMPLETED
+    approving_officer: Optional[str] = None
+    approval_notes: Optional[str] = None

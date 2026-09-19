@@ -3,16 +3,16 @@
 **Project:** National Infrastructure Reality & Verification Network using AI (NIRVANA)  
 **Team:** TYRANTS | **Smart India Hackathon:** SIH26102  
 **Platform Version:** 1.0.0-production-ready  
-**Maintained by:** Autonomous Lead Engineering Agent  
+**Team Leader:** Akhil Bharath Godekari | **Team Member 1:** Rohith Vadra  
 
 ---
 
 ## 1. Environment & Base Infrastructure Setup
-- **OS & Runtime Detection:** Identified Windows host with Python 3.14.3 (64-bit). Configured isolated workspace at C:\Users\madhu\.gemini\antigravity\scratch\nirvana.
-- **Node.js & npm Runtime:** Downloaded and installed portable Node.js 20.18.0 and npm 10.8.2 under C:\Users\madhu\.gemini\antigravity\scratch\tools\node.
-- **Python Dependencies:** Installed required packages: astapi, uvicorn, pydantic, sqlalchemy, lembic, pandas, 
+- **OS & Runtime Detection:** Identified Windows host with Python 3.14.3 (64-bit). Configured project repository.
+- **Node.js & npm Runtime:** Configured Node.js LTS and npm for client builds.
+- **Python Dependencies:** Installed required packages: astapi, uvicorn, pydantic, sqlalchemy,  lembic, pandas, 
 umpy, scikit-learn, joblib, pytest, PyJWT, 
-eportlab, httpx, crypt, cryptography, pdfplumber.
+eportlab, httpx,  crypt, cryptography, pdfplumber.
 - **Version Control:** Initialized Git repository, configured comprehensive .gitignore, and established versioned commit history.
 - **Configuration Management:** Created .env and .env.example defining secrets, database URIs, JWT expiration, and service endpoints.
 

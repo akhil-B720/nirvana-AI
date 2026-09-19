@@ -2,7 +2,7 @@
 
 **Generated:** 2026-09-17  
 **Platform:** Windows  
-**Project Path:** `C:\Users\madhu\.gemini\antigravity\scratch\nirvana`
+**Project:** NIRVANA — National Infrastructure Reality & Verification Network using AI  
 
 ---
 

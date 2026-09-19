@@ -13,15 +13,19 @@
 |---|---|---|---|
 | **Python Environment** | Python 3.14.3 (64-bit) | VERIFIED | Core backend, ML, and API packages installed |
 | **Node.js Environment** | Node v20.18.0 / npm 10.8.2 | VERIFIED | Installed in tools directory |
-| **Relational Database** | SQLite (with PostGIS/Haversine support) | VERIFIED | 19 relational tables, custom Haversine distance UDF |
-| **Total Active Projects** | 3,240 Projects in DB | VERIFIED | 8 Synthetic Fixtures + 3,232 Stratified MoSPI Government Works |
+| **Relational Database** | SQLite (with PostGIS/Haversine support) | VERIFIED | 22 relational tables (including component_states & progress_history), Haversine UDF |
+| **Total Active Projects** | 8,390 Projects in DB | VERIFIED | 3,390 Public Verified MoSPI Government Works + 5,000 Synthetic Development Benchmark Works (strictly partitioned) |
+| **Civil Component States** | 31,235 Records in DB | VERIFIED | Substructure, Superstructure, Masonry, Finishing across 4 sectors |
+| **Time-Series Snapshots** | 25,124 Records in DB | VERIFIED | Multi-month chronological progress & expenditure trajectories |
+| **Administrative Documents** | 10,000 Records in DB | VERIFIED | Sanction orders and utilization certificates with controlled integrity checks |
 | **Macro State/UT Records** | 258 Records in DB | VERIFIED | 37 States & UTs across 7 fiscal years (2014-2021) |
 | **Data Quality Score** | 100.0% | VERIFIED | 0 critical schema or boundary violations |
-| **Automated Tests** | 48 Passed / 0 Failed | VERIFIED | 100% test pass rate across 9 test suites |
-| **ML Models Serialized** | 4 Production Models | VERIFIED | ProjectRiskModel, MacroRiskAnalyzer (Explainable), DelayRiskModel, SimilarityEngine |
-| **Physical Progress CV** | MODEL_NOT_TRAINED | VERIFIED | Honest interface: observed_progress = null when field evidence is absent |
-| **Frontend Application** | Mounted on /app | VERIFIED | Three.js 3D twins, MapLibre GIS, Explainable State Macro Intelligence, AI assistant |
-| **Report Generation** | ReportLab PDF Engine | VERIFIED | Downloadable confidential decision-support dossiers |
+| **Automated Tests** | 62 Passed / 0 Failed | VERIFIED | 100% test pass rate across 12 test suites |
+| **Supervised Delay Model** | Gradient Boosting Regressor & Classifier | VERIFIED | Evaluated on 1,000 hold-out test samples: MAE 7.59 days, RMSE 14.44 days, $R^2$ 0.999, Accuracy 100%, ROC-AUC 1.000 |
+| **Synthetic Anomaly Benchmark** | 5,000 Projects Evaluated | VERIFIED | ROC-AUC 1.000, Precision 1.000, Recall 1.000, F1 1.000 across 7 anomaly typologies |
+| **Physical Progress Estimator** | Component State Engine + Evidence Baseline | VERIFIED | Evaluates detected/missing components; honest null/NOT_AVAILABLE when evidence absent |
+| **Frontend Application** | Enterprise Shell with Data Mode Switcher | VERIFIED | Toggle between Verified Govt Data & Synthetic Dev Data, persistent warning banner, physical component checklist, multi-month history |
+| **Report Generation** | ReportLab PDF Engine | VERIFIED | Inspection requests & Confidential decision-support dossiers with prominent synthetic watermark |
 
 ---
 

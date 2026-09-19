@@ -3,7 +3,8 @@ import csv
 from datetime import date, timedelta
 
 def generate_synthetic_fixtures():
-    target_path = os.path.join(r"C:\Users\madhu\.gemini\antigravity\scratch\nirvana", "dataset", "synthetic", "fixtures.csv")
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    target_path = os.path.join(base_dir, "dataset", "synthetic", "fixtures.csv")
     os.makedirs(os.path.dirname(target_path), exist_ok=True)
 
     today = date.today()

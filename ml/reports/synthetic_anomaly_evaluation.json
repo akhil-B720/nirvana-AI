@@ -1,0 +1,65 @@
+{
+  "evaluation_title": "Project-Level Analytical Anomaly Detection \u2014 Synthetic Benchmark",
+  "evaluation_type": "SYNTHETIC_TEST_DATA",
+  "dataset": "synthetic_projects (5000 records)",
+  "evaluation_timestamp": "2026-09-19T15:16:07.730138",
+  "sample_size": 5000,
+  "normal_samples": 4250,
+  "anomaly_samples": 750,
+  "threshold_used": 50.0,
+  "overall_metrics": {
+    "roc_auc": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "true_positives": 750,
+    "false_positives": 0,
+    "true_negatives": 4250,
+    "false_negatives": 0
+  },
+  "category_detection_rates": {
+    "DELAY_PATTERN": {
+      "sample_count": 90,
+      "detected_anomalies": 90,
+      "detection_rate": 1.0
+    },
+    "DOCUMENT_INCONSISTENCY": {
+      "sample_count": 123,
+      "detected_anomalies": 123,
+      "detection_rate": 1.0
+    },
+    "LOCATION_INCONSISTENCY": {
+      "sample_count": 94,
+      "detected_anomalies": 94,
+      "detection_rate": 1.0
+    },
+    "NORMAL": {
+      "sample_count": 4250,
+      "correctly_unflagged": 4250,
+      "false_positive_count": 0,
+      "specificity": 1.0
+    },
+    "PAYMENT_PROGRESS_MISMATCH": {
+      "sample_count": 110,
+      "detected_anomalies": 110,
+      "detection_rate": 1.0
+    },
+    "POTENTIAL_SIMILARITY": {
+      "sample_count": 116,
+      "detected_anomalies": 116,
+      "detection_rate": 1.0
+    },
+    "REALITY_GAP": {
+      "sample_count": 110,
+      "detected_anomalies": 110,
+      "detection_rate": 1.0
+    },
+    "UNUSUAL_FINANCIAL_PATTERN": {
+      "sample_count": 107,
+      "detected_anomalies": 107,
+      "detection_rate": 1.0
+    }
+  },
+  "statutory_classification": "Synthetic Development-Data Evaluation Only",
+  "disclaimer": "These evaluation metrics were obtained strictly on synthetic development datasets with controlled mathematical anomaly injections. They must NEVER be represented as real-world government audit precision, false-positive rates, or judicial fraud evidence."
+}

@@ -72,6 +72,10 @@ class Project(Base):
     agency = Column(String(255), nullable=True)
     source_id = Column(Integer, ForeignKey("data_sources.id"), nullable=True)
     data_availability_status = Column(String(32), default="PUBLIC_VERIFIED")  # PUBLIC_VERIFIED, AUTHORIZED, SYNTHETIC, INSUFFICIENT_DATA
+    data_status = Column(String(32), default="PUBLIC_VERIFIED", index=True)  # PUBLIC_VERIFIED vs SYNTHETIC
+    source_type = Column(String(64), default="GOVERNMENT_DATA", index=True)  # GOVERNMENT_DATA vs SYNTHETIC_TEST_DATA
+    anomaly_label = Column(Integer, default=0, index=True)  # 0 = normal, 1 = potential anomaly
+    anomaly_category = Column(String(64), default="NORMAL", index=True)  # NORMAL, UNUSUAL_FINANCIAL_PATTERN, PAYMENT_PROGRESS_MISMATCH, etc.
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -79,6 +83,12 @@ class Project(Base):
     source = relationship("DataSource", back_populates="projects")
     financials = relationship("ProjectFinancial", back_populates="project", cascade="all, delete-orphan")
     progress_records = relationship("ProjectProgress", back_populates="project", cascade="all, delete-orphan")
+    progress_history = relationship("ProjectProgressHistory", back_populates="project", cascade="all, delete-orphan")
+    components = relationship("ProjectComponentState", back_populates="project", cascade="all, delete-orphan")
+
+    @property
+    def component_states(self):
+        return self.components
     events = relationship("ProjectEvent", back_populates="project", cascade="all, delete-orphan")
     evidence_items = relationship("ProjectEvidence", back_populates="project", cascade="all, delete-orphan")
     documents = relationship("ProjectDocument", back_populates="project", cascade="all, delete-orphan")
@@ -86,6 +96,7 @@ class Project(Base):
     anomalies = relationship("ProjectAnomaly", back_populates="project", cascade="all, delete-orphan")
     risk_scores = relationship("RiskScore", back_populates="project", cascade="all, delete-orphan")
     verification_cases = relationship("VerificationCase", back_populates="project", cascade="all, delete-orphan")
+    inspection_requests = relationship("InspectionRequest", back_populates="project", cascade="all, delete-orphan")
 
 # ---------------------------------------------------------
 # 4. FINANCIALS & PROGRESS LEDGERS
@@ -117,6 +128,35 @@ class ProjectProgress(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     project = relationship("Project", back_populates="progress_records")
+
+class ProjectProgressHistory(Base):
+    __tablename__ = "project_progress_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(String(64), ForeignKey("projects.project_id"), nullable=False, index=True)
+    record_date = Column(Date, nullable=False)
+    reported_progress = Column(Float, nullable=False)
+    financial_expenditure = Column(Float, nullable=False, default=0.0)
+    status = Column(String(32), default="IN_PROGRESS")
+    data_status = Column(String(32), default="SYNTHETIC")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    project = relationship("Project", back_populates="progress_history")
+
+class ProjectComponentState(Base):
+    __tablename__ = "project_component_states"
+
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(String(64), ForeignKey("projects.project_id"), nullable=False, index=True)
+    sector = Column(String(64), nullable=False)  # BUILDING, ROAD, BRIDGE, WATER_TANK
+    component_name = Column(String(64), nullable=False)
+    weight_pct = Column(Float, nullable=False)
+    completion_pct = Column(Float, nullable=False, default=0.0)
+    detected_status = Column(String(32), default="NOT_STARTED")  # COMPLETED, IN_PROGRESS, NOT_STARTED, MISSING
+    data_status = Column(String(32), default="SYNTHETIC")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    project = relationship("Project", back_populates="components")
 
 class ProjectEvent(Base):
     __tablename__ = "project_events"
@@ -318,3 +358,32 @@ class VerificationAction(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     case = relationship("VerificationCase", back_populates="actions")
+
+
+# ---------------------------------------------------------
+# 9. FIELD INSPECTION REQUESTS & APPROVAL WORKFLOW
+# ---------------------------------------------------------
+class InspectionRequest(Base):
+    __tablename__ = "inspection_requests"
+
+    request_id = Column(String(64), primary_key=True, index=True)
+    project_id = Column(String(64), ForeignKey("projects.project_id"), nullable=False, index=True)
+    inspector_name = Column(String(128), nullable=False)
+    state = Column(String(128), nullable=False)
+    district = Column(String(128), nullable=False)
+    reason_for_inspection = Column(Text, nullable=False)
+    risk_score = Column(Float, nullable=False)
+    risk_tier = Column(String(32), nullable=False)
+    contributing_factors_json = Column(Text, nullable=True)
+    evidence_available = Column(Text, nullable=True)
+    evidence_missing = Column(Text, nullable=True)
+    proposed_date = Column(String(32), nullable=False)
+    priority = Column(String(32), default="HIGH")  # LOW, MEDIUM, HIGH, CRITICAL
+    requested_by = Column(String(128), nullable=False)
+    requested_at = Column(DateTime, default=datetime.utcnow)
+    approving_officer = Column(String(128), nullable=True)
+    approval_status = Column(String(32), default="DRAFT", index=True)  # DRAFT, SUBMITTED, UNDER_REVIEW, APPROVED, REJECTED, COMPLETED
+    approval_notes = Column(Text, nullable=True)
+    resolved_at = Column(DateTime, nullable=True)
+
+    project = relationship("Project", back_populates="inspection_requests")

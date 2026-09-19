@@ -1,40 +1,30 @@
-# NIRVANA - Known Blockers & External Dependencies
+# NIRVANA - Known Blockers & Technical Resolution Matrix
 
 **Project:** National Infrastructure Reality & Verification Network using AI (NIRVANA)  
 **Team:** TYRANTS | **Smart India Hackathon:** SIH26102  
-**Status:** Documented for production rollout  
+**Platform Status:** Resolving via Synthetic Development Architecture  
 
 ---
 
-## 1. External Data Source Connectivity Blockers
+## 1. Feature Status & Resolution Matrix
 
-### A. MoSPI MPLADS Portal Direct Scraping
-- **Portal:** https://mplads.gov.in/ / http://164.100.68.116/
-- **Blocker:** The government production portal enforces active CAPTCHA challenges, ASP.NET session state cookies, and IP rate-limiting firewalls. Direct unauthenticated automated scraping violates government terms of service and fails with connection timeouts.
-- **Resolution in NIRVANA:** Ingested verified, public ODbL archive of 60,359 authentic MoSPI records (Vonter/india-mplads-works) with SHA-256 provenance tracking. Provided production batch upload interface and nodal officer API token placeholder for authenticated ministry deployments.
-
-### B. data.gov.in API Key Rate Limits
-- **Portal:** https://api.data.gov.in/
-- **Blocker:** Public API keys are rate-limited to 1,000 calls per day. Real-time streaming across all 543 parliamentary constituencies requires a dedicated government NIC API gateway subscription.
-- **Resolution in NIRVANA:** Structured caching and batch CSV ingest mode implemented in DataGovDataSource.
-
----
-
-## 2. Satellite & Drone Sensor Data Feed Blockers
-
-### A. High-Resolution Orthomosaic Satellite Imagery
-- **Resolution required:** Ground Sampling Distance (GSD) < 30 cm is required to detect structural rebar, foundation trenches, and building floor milestones from space. Free public optical imagery (Sentinel-2 at 10m, Landsat at 30m) is insufficient for micro-level municipal construction verification.
-- **Blocker:** Commercial satellite constellations (Maxar, PlanetScope) require paid institutional licensing and scheduled tasking passes.
-- **Resolution in NIRVANA:** NIRVANA explicitly marks unverified projects as observed_progress = null with status NOT_AVAILABLE. Never fabricates satellite observations. Built a secure field evidence upload pipeline with GPS EXIF extraction so field engineers can supply ground-truth georeferenced photos.
-
-### B. Computer Vision Physical Progress Model
-- **Blocker:** Training a multi-class semantic segmentation model (YOLOv8 / Mask R-CNN) for 100+ structural milestones across 10 civil engineering sectors requires ~50,000 annotated field inspection images.
-- **Resolution in NIRVANA:** The interface is architected and documented in docs/MODEL_CARD_PROGRESS.md. When image datasets are absent, the model status is honestly reported as MODEL_NOT_TRAINED.
+| Feature | Current Status | Root Cause | Fix Plan | Status |
+|---|---|---|---|---|
+| **Physical Progress Estimation** | Returns `observed_progress: null` / `NOT_AVAILABLE` for works lacking drone/orthomosaic imagery. | Official MoSPI MPLADS disclosures only provide high-level status and reported progress, omitting site photographs and milestone component breakdowns. | Build a component milestone breakdown generator for 4 infrastructure sectors (Building, Road, Bridge, Water Tank); implement `PhysicalProgressEstimator` that calculates stage completion and returns honest `data_status="SYNTHETIC"` attribution. | **RESOLVED IN SYNTHETIC DEV ARCHITECTURE** |
+| **Project-Level Delay Model** | S-curve formula without supervised machine learning model. | Real MPLADS disclosures lack multi-month historical progress logs and intermediate inspection dates needed for supervised regression. | Create time-series progress history (`project_progress_history`) with realistic completion trajectories; train supervised `RandomForest` / `GradientBoosting` delay regressor; report actual MAE/RMSE on test split. | **RESOLVED IN SYNTHETIC DEV ARCHITECTURE** |
+| **Project-Level Anomaly Ground Truth** | Unsupervised Isolation Forest; no labeled anomalies to evaluate precision, recall, or confusion matrices. | Public government records publish sanctioned and completed works without investigative vigilance findings or fraud labels. | Generate 5,000 synthetic projects with controlled ground-truth labels across 8 distinct anomaly categories (`PAYMENT_PROGRESS_MISMATCH`, `UNUSUAL_FINANCIAL_PATTERN`, etc.); evaluate classifier performance. | **RESOLVED IN SYNTHETIC DEV ARCHITECTURE** |
+| **Real vs. Synthetic Data Separation** | Single database view where 8 synthetic test fixtures existed alongside 3,232 real works without prominent UI mode switching. | Initial application shell displayed combined database records. | Add `data_status` query parameter filtering to backend API endpoints (`?data_status=PUBLIC_VERIFIED` vs `SYNTHETIC`) and implement an explicit top Data Mode Switcher in the UI with a persistent warning banner. | **RESOLVED IN SYNTHETIC DEV ARCHITECTURE** |
+| **Document Consistency Verification** | Basic schema without cross-document discrepancy tests. | Government portal does not publish individual work sanction letters or utilization certificate PDFs for public download. | Generate structured synthetic document records (Sanction Orders, Utilization Certificates) with controlled financial and progress inconsistencies for verification engine testing. | **RESOLVED IN SYNTHETIC DEV ARCHITECTURE** |
+| **Satellite High-Res Orthomosaic Imagery** | Raster imagery provides 1m-10m optical overview; sub-30cm rebar-level drone feeds unavailable without commercial licensing. | Commercial high-resolution satellites (Maxar/Planet) and DGCA drone surveys require active mission tasking and paid enterprise licenses. | Utilize high-resolution Esri World Imagery with boundary overlays for geospatial context; maintain honest `observed_progress: null` for projects lacking field photographs. | **DOCUMENTED & ARCHITECTED** |
 
 ---
 
-## 3. Deployment & Infrastructure Blockers
+## 2. Real Government Data vs. Synthetic Data Boundary Rules
 
-### A. Native PostgreSQL / PostGIS on Developer Windows Host
-- **Blocker:** Developer local machine lacks active local PostgreSQL service on port 5432 and Docker daemon is not in Windows system PATH.
-- **Resolution in NIRVANA:** Built full SQLite spatial engine with custom Haversine SQL UDF (haversine_km). Full Docker compose scripts (docker-compose.yml, ackend.Dockerfile, rontend.Dockerfile) are provided for production servers.
+1. **Separation**: Real government records (`data_status = "PUBLIC_VERIFIED"`) and synthetic development records (`data_status = "SYNTHETIC"`, `source_type = "SYNTHETIC_TEST_DATA"`) must remain completely distinguishable in the database and API responses.
+2. **UI Transparency**: When viewing synthetic records, the application must display a prominent warning banner:  
+   *`"DEVELOPMENT MODE: Viewing Synthetic Evaluation Dataset. Not Government Records."`*
+3. **Statutory Language**: Under no circumstances will synthetic anomaly labels be reported as real-world fraud or crime. Standardized wording must remain:  
+   *`"Potential Anomaly / Analytical Risk Indicator — Requires Human Verification"`*.
+4. **Model Performance**: Metrics computed on synthetic datasets (MAE, RMSE, F1, ROC-AUC) are explicitly tagged:  
+   *`"Synthetic development-data evaluation — does not establish real-world predictive accuracy"`*.

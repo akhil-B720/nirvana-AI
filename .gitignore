@@ -23,12 +23,14 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.pytest_cache/
 
-# Databases & Local State
+# Databases & Local Runtime State
 *.db
 *.sqlite3
 *.sqlite
 uploads/
+reports/**/*.pdf
 reports/*.pdf
 
 # Node & Frontend

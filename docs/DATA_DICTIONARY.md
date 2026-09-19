@@ -34,6 +34,10 @@ Primary registry of infrastructure works sanctioned under MPLADS.
 - `agency` (VARCHAR(255), NULLABLE): Implementing executive agency / contractor name.
 - `source_id` (INTEGER, Foreign Key -> `data_sources.id`): Source record provenance.
 - `data_availability_status` (VARCHAR(32), DEFAULT 'PUBLIC_VERIFIED'): `PUBLIC_VERIFIED`, `AUTHORIZED`, `SYNTHETIC`, `INSUFFICIENT_DATA`.
+- `data_status` (VARCHAR(30), DEFAULT 'PUBLIC_VERIFIED'): Strict boundary partition: `PUBLIC_VERIFIED` (real MoSPI government data) or `SYNTHETIC` (development test dataset).
+- `source_type` (VARCHAR(64), DEFAULT 'OFFICIAL_MPLADS'): `OFFICIAL_MPLADS`, `SYNTHETIC_TEST_DATA`, `OFFICER_UPLOAD`.
+- `anomaly_label` (INTEGER, DEFAULT 0): Ground-truth test label for synthetic benchmark: 0 = normal, 1 = potential anomaly.
+- `anomaly_category` (VARCHAR(64), NULLABLE): Anomaly typology for benchmark evaluation (e.g. `PAYMENT_PROGRESS_MISMATCH`, `DELAY_PATTERN`, `UNUSUAL_FINANCIAL_PATTERN`).
 - `created_at` (TIMESTAMP WITH TIME ZONE, DEFAULT NOW()): Record creation timestamp.
 - `updated_at` (TIMESTAMP WITH TIME ZONE, DEFAULT NOW()): Last modification timestamp.
 
@@ -130,3 +134,30 @@ Immutable tracking for accountability.
 - `new_value_json` (JSON / TEXT, NULLABLE).
 - `ip_address` (VARCHAR(45), NULLABLE).
 - `timestamp` (TIMESTAMP WITH TIME ZONE, DEFAULT NOW()).
+
+---
+
+### 1.8 `project_component_states`
+Granular civil engineering components for physical reality tracking and digital twins.
+- `id` (INTEGER, Primary Key, Auto-increment).
+- `project_id` (VARCHAR(64), Foreign Key -> `projects.project_id`, NOT NULL).
+- `sector` (VARCHAR(64), NOT NULL): Sector categorization (`BUILDING`, `ROAD`, `BRIDGE`, `WATER_TANK`).
+- `component_name` (VARCHAR(64), NOT NULL): e.g., `Site Preparation & Earthwork`, `Substructure & RCC Footings`, `Superstructure RCC Framing`.
+- `weight_pct` (DECIMAL(5, 2), NOT NULL): Structural milestone weight percentage (sum = 100.0%).
+- `completion_pct` (DECIMAL(5, 2), DEFAULT 0.0): Physical completion percentage (0.0 to 100.0).
+- `detected_status` (VARCHAR(32), DEFAULT 'NOT_STARTED'): `COMPLETED`, `IN_PROGRESS`, `NOT_STARTED`, `MISSING`.
+- `data_status` (VARCHAR(32), DEFAULT 'SYNTHETIC'): Dataset partition tag (`PUBLIC_VERIFIED` or `SYNTHETIC`).
+- `created_at` (TIMESTAMP WITH TIME ZONE, DEFAULT NOW()).
+
+---
+
+### 1.9 `project_progress_history`
+Chronological multi-month progress and expenditure snapshots for time-series modeling.
+- `id` (INTEGER, Primary Key, Auto-increment).
+- `project_id` (VARCHAR(64), Foreign Key -> `projects.project_id`, NOT NULL).
+- `record_date` (DATE, NOT NULL): Date of administrative snapshot.
+- `reported_progress` (DECIMAL(5, 2), NOT NULL): Claimed completion percentage on snapshot date.
+- `financial_expenditure` (DECIMAL(15, 2), DEFAULT 0.0): Cumulative expenditure in INR on snapshot date.
+- `status` (VARCHAR(32), DEFAULT 'IN_PROGRESS'): Milestone status enum.
+- `data_status` (VARCHAR(32), DEFAULT 'SYNTHETIC'): Dataset partition tag.
+- `created_at` (TIMESTAMP WITH TIME ZONE, DEFAULT NOW()).

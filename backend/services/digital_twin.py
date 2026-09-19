@@ -81,10 +81,23 @@ class DigitalTwinEngine:
         observed_components = cls.calculate_component_states(p_type, obs_prog) if obs_prog is not None else None
         simulated_components = cls.calculate_component_states(p_type, simulated_progress) if simulated_progress is not None else None
 
+        db_components = []
+        if hasattr(project, "components") and project.components:
+            for c in project.components:
+                db_components.append({
+                    "component_id": str(c.id),
+                    "name": c.component_name,
+                    "completion_percentage": c.completion_pct,
+                    "status": c.detected_status,
+                    "weight_pct": c.weight_pct,
+                    "data_status": c.data_status
+                })
+
         return {
             "project_id": project.project_id,
             "project_name": project.project_name,
             "project_type": p_type,
+            "data_status": getattr(project, "data_status", "PUBLIC_VERIFIED"),
             "reported_state": {
                 "progress": rep_prog,
                 "components": reported_components
@@ -95,9 +108,11 @@ class DigitalTwinEngine:
                 "message": "Physical ground evidence unavailable." if obs_prog is None else None,
                 "components": observed_components
             },
+            "granular_components": db_components,
             "simulation_state": {
                 "progress": simulated_progress,
                 "components": simulated_components
             } if simulated_progress is not None else None,
             "metadata_notice": cls.NOTICE
         }
+

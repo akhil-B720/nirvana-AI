@@ -72,6 +72,29 @@ class PDFReportGenerator:
         elements.append(Paragraph(f"CONFIDENTIAL DECISION-SUPPORT DOSSIER | Generated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}", subtitle_style))
         elements.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor("#1e3a8a"), spaceAfter=10))
 
+        # Synthetic Development Watermark
+        is_synthetic = getattr(project, "data_status", "PUBLIC_VERIFIED") == "SYNTHETIC"
+        if is_synthetic:
+            synthetic_banner_style = ParagraphStyle(
+                "SyntheticBanner",
+                parent=styles["Normal"],
+                fontSize=10,
+                leading=14,
+                textColor=colors.HexColor("#b45309"),
+                backColor=colors.HexColor("#fef3c7"),
+                borderColor=colors.HexColor("#f59e0b"),
+                borderWidth=1,
+                borderPadding=8,
+                spaceAfter=12,
+                alignment=1
+            )
+            elements.append(Paragraph(
+                "<b>*** SYNTHETIC DEVELOPMENT DATA — NOT OFFICIAL GOVERNMENT RECORDS ***</b><br/>"
+                "Generated strictly for algorithmic validation, development testing, and model benchmarking under SIH26102. "
+                "This dossier does not represent actual physical works or government financial audits.",
+                synthetic_banner_style
+            ))
+
         # Legal Advisory
         disclaimer_text = (
             "<b>STATUTORY ADVISORY:</b> AI-generated risk indicators are decision-support signals "
@@ -166,3 +189,128 @@ class PDFReportGenerator:
 
         doc.build(elements)
         return output_path
+
+    @classmethod
+    def generate_inspection_request_pdf(cls, inspection, output_path: str) -> str:
+        """
+        Generates formal Inspection Request document for superior officer authorization.
+        """
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+        doc = SimpleDocTemplate(
+            output_path,
+            pagesize=letter,
+            rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36
+        )
+
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            "DocTitle", parent=styles["Heading1"], fontSize=16, leading=20,
+            textColor=colors.HexColor("#0f172a"), spaceAfter=4
+        )
+        subtitle_style = ParagraphStyle(
+            "DocSubTitle", parent=styles["Normal"], fontSize=9, leading=13,
+            textColor=colors.HexColor("#475569"), spaceAfter=10
+        )
+        section_style = ParagraphStyle(
+            "SectionHeader", parent=styles["Heading2"], fontSize=11, leading=15,
+            textColor=colors.HexColor("#1e3a8a"), spaceBefore=8, spaceAfter=4
+        )
+        body_style = ParagraphStyle(
+            "DocBody", parent=styles["Normal"], fontSize=8.5, leading=12,
+            textColor=colors.HexColor("#1e293b")
+        )
+        advisory_style = ParagraphStyle(
+            "LegalAdvisory", parent=styles["Normal"], fontSize=8, leading=11,
+            textColor=colors.HexColor("#b91c1c"), backColor=colors.HexColor("#fef2f2"),
+            borderPadding=5, spaceAfter=10
+        )
+
+        elements = []
+
+        # Header
+        elements.append(Paragraph("GOVERNMENT OF INDIA — MPLADS VERIFICATION NETWORK", title_style))
+        elements.append(Paragraph(f"FORMAL REQUEST FOR FIELD VERIFICATION & AUDIT | Req ID: {inspection.request_id}", subtitle_style))
+        elements.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor("#1e3a8a"), spaceAfter=8))
+
+        # Advisory
+        elements.append(Paragraph(
+            "<b>STATUTORY ADVISORY:</b> AI-generated risk indicators are decision-support signals and do not constitute proof of fraud, "
+            "corruption, or wrongdoing. Nodal vigilance officers must conduct independent physical inspection before certifying findings.",
+            advisory_style
+        ))
+
+        # 1. Project & Officer Identification
+        elements.append(Paragraph("1. Administrative & Jurisdiction Particulars", section_style))
+        admin_data = [
+            [Paragraph("<b>Request Reference ID:</b>", body_style), Paragraph(inspection.request_id, body_style),
+             Paragraph("<b>Status:</b>", body_style), Paragraph(f"<b>{inspection.approval_status}</b>", body_style)],
+            [Paragraph("<b>Project ID:</b>", body_style), Paragraph(inspection.project_id, body_style),
+             Paragraph("<b>Priority:</b>", body_style), Paragraph(f"<b>{inspection.priority}</b>", body_style)],
+            [Paragraph("<b>Jurisdiction:</b>", body_style), Paragraph(f"{inspection.district}, {inspection.state}", body_style),
+             Paragraph("<b>Proposed Inspection Date:</b>", body_style), Paragraph(inspection.proposed_date or "Immediate", body_style)],
+            [Paragraph("<b>Initiating Officer:</b>", body_style), Paragraph(inspection.inspector_name, body_style),
+             Paragraph("<b>Submitted At:</b>", body_style), Paragraph(inspection.requested_at.strftime('%Y-%m-%d %H:%M UTC') if inspection.requested_at else "N/A", body_style)]
+        ]
+        t1 = Table(admin_data, colWidths=[120, 150, 130, 140])
+        t1.setStyle(TableStyle([
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#f8fafc")),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        elements.append(t1)
+        elements.append(Spacer(1, 8))
+
+        # 2. Grounds for Inspection & Analytical Risk Indicators
+        elements.append(Paragraph("2. Analytical Anomaly Signals & Justification", section_style))
+        risk_data = [
+            [Paragraph("<b>Analytical Risk Score:</b>", body_style), Paragraph(f"<b>{inspection.risk_score:.1f} / 100 ({inspection.risk_tier})</b>", body_style)],
+            [Paragraph("<b>Primary Trigger Reason:</b>", body_style), Paragraph(inspection.reason_for_inspection, body_style)],
+            [Paragraph("<b>Key Contributing Factors:</b>", body_style), Paragraph(inspection.contributing_factors_json or "Statistical deviation in progress vs expenditure timeline", body_style)],
+            [Paragraph("<b>Available Ground Evidence:</b>", body_style), Paragraph(inspection.evidence_available or "Official MoSPI Administrative Records", body_style)],
+            [Paragraph("<b>Missing / Unverified Items:</b>", body_style), Paragraph(inspection.evidence_missing or "Physical site inspection photo, completion certificate geotag", body_style)]
+        ]
+        t2 = Table(risk_data, colWidths=[140, 400])
+        t2.setStyle(TableStyle([
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ]))
+        elements.append(t2)
+        elements.append(Spacer(1, 10))
+
+        # 3. Superior Authorization & Approval Section
+        elements.append(Paragraph("3. Superior Officer Endorsement & Approval Decision", section_style))
+        appr_data = [
+            [Paragraph("<b>Designated Approving Officer:</b>", body_style), Paragraph(inspection.approving_officer or "District Collector / Chief Vigilance Officer", body_style)],
+            [Paragraph("<b>Approval Determination:</b>", body_style), Paragraph(f"<b>{inspection.approval_status}</b>", body_style)],
+            [Paragraph("<b>Official Review Directives / Notes:</b>", body_style), Paragraph(inspection.approval_notes or "Awaiting formal review by competent administrative authority.", body_style)],
+            [Paragraph("<b>Signature & Official Seal:</b>", body_style), Paragraph("<br/><br/>________________________________________<br/>(Authorized Signatory / Official Stamp)", body_style)]
+        ]
+        t3 = Table(appr_data, colWidths=[140, 400])
+        t3.setStyle(TableStyle([
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#f8fafc")),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ]))
+        elements.append(t3)
+        elements.append(Spacer(1, 12))
+
+        # Footer
+        elements.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#94a3b8"), spaceAfter=6))
+        elements.append(Paragraph("NIRVANA Platform | SIH26102 Team TYRANTS | Formal Inspection Brief", subtitle_style))
+
+        doc.build(elements)
+        return output_path
+
+    @classmethod
+    def generate_verification_report_pdf(cls, project, risk_summary: dict, output_path: str) -> str:
+        """
+        Generates draft verification report for any high-risk project.
+        """
+        fused = getattr(project, "fused_risk_score", None) or risk_summary.get("fused_risk_score", 0.0)
+        return cls.generate_project_dossier(
+            project=project,
+            reality_gap_data={"reality_gap_score": getattr(project, "reality_gap_score", None) or 0.0, "contributing_factors": risk_summary.get("contributing_factors", [])},
+            risk_data=risk_summary,
+            recommendations=[{"priority": "HIGH", "trigger": f"Risk Score {fused:.1f}", "recommended_action": "Conduct site inspection and review contractor invoices"}],
+            output_path=output_path
+        )

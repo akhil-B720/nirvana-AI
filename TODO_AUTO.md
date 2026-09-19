@@ -6,13 +6,18 @@
 ---
 
 ## High Priority (SIH Grand Finale / Pilot Deployment)
-- [x] Integrate real MoSPI MPLADS works archive (60,359 records available, 150 ingested).
+- [x] Integrate real MoSPI MPLADS works archive (60,359 records available, 3,382 ingested into active DB).
 - [x] Multi-delimiter CSV parsing with automatic encoding and format detection.
 - [x] Implement deterministic geodesic Haversine distance engine in SQLite fallback.
-- [x] Develop interactive Three.js 3D Digital Twin with 4 structural asset templates.
+- [x] Develop interactive Three.js 3D Digital Twin with structural asset templates.
 - [x] Implement complete RBAC security with JWT, bcrypt, and audit logging.
 - [x] Create formal PDF dossier generator with legal advisory notice.
-- [x] Achieve 100% automated test coverage across core modules (25/25 tests passing).
+- [x] Implement Inspection Request & Superior Approval workflow with ReportLab PDF export.
+- [x] Data-driven physical progress estimator with component checklists and honest nulls.
+- [x] Draft Verification Report modal and API with standardized wording.
+- [x] Universal hash routing, deep linking, 3-state sorting, and Light/Dark mode.
+- [x] High-resolution Satellite Hybrid basemap with natural physics zoom/pan.
+- [x] Achieve 100% automated test coverage across core modules (54/54 tests passing).
 - [ ] Implement Celery / Redis background worker for asynchronous batch ingestion of all 60,000+ works.
 - [ ] Connect NIC OpenID single sign-on (SSO) for district magistrates and vigilance officers.
 

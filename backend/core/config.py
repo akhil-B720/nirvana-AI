@@ -6,6 +6,7 @@ class Settings(BaseModel):
     APP_NAME: str = "NIRVANA"
     APP_VERSION: str = "1.0.0"
     APP_ENV: str = os.getenv("APP_ENV", "development")
+    DATA_MODE: str = os.getenv("DATA_MODE", "REAL")
     DEBUG: bool = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
     
     SECRET_KEY: str = os.getenv("SECRET_KEY", "nirvana_development_secret_key_change_in_production_32bytes_minimum_length")

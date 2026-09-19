@@ -38,6 +38,10 @@ from fastapi.responses import RedirectResponse
 static_dir = Path(__file__).resolve().parent / "static"
 if static_dir.exists():
     app.mount("/app", StaticFiles(directory=str(static_dir), html=True), name="static_app")
+    assets_dir = static_dir / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="static_assets")
+
 
 @app.on_event("startup")
 def on_startup():
@@ -46,6 +50,16 @@ def on_startup():
         seed_default_users(db)
     finally:
         db.close()
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "HEALTHY",
+        "app": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+        "mode": settings.DATA_MODE,
+        "environment": settings.APP_ENV
+    }
 
 @app.get("/")
 def root():
