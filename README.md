@@ -24,6 +24,7 @@
 - **Hackathon:** Smart India Hackathon — SIH26102
 - **Team Leader:** Akhil Bharath Godekari
 - **Team Member 1:** Rohith Vadra
+- **Team Member 2:** Kiranmai Janapana
 
 ---
 

@@ -3,7 +3,7 @@
 **Project:** National Infrastructure Reality & Verification Network using AI (NIRVANA)  
 **Team:** TYRANTS | **Smart India Hackathon:** SIH26102  
 **Platform Version:** 1.0.0-production-ready  
-**Team Leader:** Akhil Bharath Godekari | **Team Member 1:** Rohith Vadra  
+**Team Leader:** Akhil Bharath Godekari | **Team Member 1:** Rohith Vadra | **Team Member 2:** Kiranmai Janapana  
 
 ---
 
